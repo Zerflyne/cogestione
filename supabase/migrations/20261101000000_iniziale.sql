@@ -84,6 +84,24 @@ $$;
 -- caricato dai rappresentanti, collega l'account; altrimenti crea la scheda.
 -- ─────────────────────────────────────────────
 
+-- Gli indirizzi degli studenti sono cognome.nome@istitutotorricelli.edu.it:
+-- se Google non fornisce nome e cognome, li ricava dall'indirizzo (es. de.santis.marco → Marco, De Santis).
+create function public.nome_da_email(email text, out nome text, out cognome text)
+language plpgsql immutable as $$
+declare
+  parti text[] := string_to_array(regexp_replace(split_part(lower(email), '@', 1), '[0-9]', '', 'g'), '.');
+  n int := coalesce(array_length(parti, 1), 0);
+begin
+  if n >= 2 then
+    nome := initcap(parti[n]);
+    cognome := initcap(array_to_string(parti[1:n - 1], ' '));
+  else
+    nome := '';
+    cognome := '';
+  end if;
+end
+$$;
+
 create function public.collega_utente() returns trigger
 language plpgsql security definer set search_path = public as $$
 declare
@@ -99,12 +117,12 @@ begin
 
   if not found then
     insert into public.studenti (user_id, email, nome, cognome)
-    values (
+    select
       new.id,
       lower(new.email),
-      coalesce(new.raw_user_meta_data ->> 'given_name', ''),
-      coalesce(new.raw_user_meta_data ->> 'family_name', '')
-    )
+      coalesce(nullif(new.raw_user_meta_data ->> 'given_name', ''), d.nome),
+      coalesce(nullif(new.raw_user_meta_data ->> 'family_name', ''), d.cognome)
+    from public.nome_da_email(new.email) d
     on conflict (email) do nothing;
   end if;
   return new;

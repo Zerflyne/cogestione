@@ -55,7 +55,7 @@ browser non può aggirarle.
 6. Nomina i rappresentanti d'istituto. Dopo che hanno fatto il primo accesso, nel SQL Editor:
    ```sql
    update studenti set ruoli = '{studente,rappr_istituto}'
-   where email in ('nome.cognome@istitutotorricelli.edu.it');
+   where email in ('cognome.nome@istitutotorricelli.edu.it');
    ```
 
 > Un progetto Supabase gratuito va in pausa dopo circa una settimana senza attività. Si riattiva dal pannello:

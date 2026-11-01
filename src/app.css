@@ -1,0 +1,313 @@
+/* Cogestione · sistema visivo
+   Neutri caldi, titoli con grazie, accento porpora. Pensato prima per il telefono. */
+
+:root {
+  --bg: #faf9f5;
+  --superficie: #ffffff;
+  --superficie-2: #f0eee6;
+  --linea: #e3e0d6;
+  --testo: #1f1e1b;
+  --testo-2: #5e5d59;
+  --testo-3: #8a8880;
+  --accento: #6b3fa0;
+  --accento-hover: #573287;
+  --accento-su: #ffffff;
+  --accento-tinta: #f1eaf8;
+  --ok: #3f7a4f;
+  --ok-tinta: #e7f2ea;
+  --attenzione: #9a6a12;
+  --attenzione-tinta: #f8efdc;
+  --errore: #b03a3a;
+  --errore-tinta: #f8e6e4;
+  --ombra: 0 1px 2px rgb(20 20 19 / 0.04), 0 4px 16px rgb(20 20 19 / 0.04);
+
+  --serif: 'Source Serif 4', 'Iowan Old Style', Georgia, serif;
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --raggio: 14px;
+  --raggio-s: 10px;
+  --larghezza: 720px;
+  --nav-h: 64px;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #141413;
+    --superficie: #1f1e1d;
+    --superficie-2: #262624;
+    --linea: #33322f;
+    --testo: #ecebe4;
+    --testo-2: #b0aea5;
+    --testo-3: #85837c;
+    --accento: #b99be6;
+    --accento-hover: #cbb3ef;
+    --accento-su: #1a1424;
+    --accento-tinta: #2a2335;
+    --ok: #8cc79c;
+    --ok-tinta: #1e2c22;
+    --attenzione: #e0b866;
+    --attenzione-tinta: #302816;
+    --errore: #ec8f86;
+    --errore-tinta: #33201e;
+    --ombra: none;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #141413;
+  --superficie: #1f1e1d;
+  --superficie-2: #262624;
+  --linea: #33322f;
+  --testo: #ecebe4;
+  --testo-2: #b0aea5;
+  --testo-3: #85837c;
+  --accento: #b99be6;
+  --accento-hover: #cbb3ef;
+  --accento-su: #1a1424;
+  --accento-tinta: #2a2335;
+  --ok: #8cc79c;
+  --ok-tinta: #1e2c22;
+  --attenzione: #e0b866;
+  --attenzione-tinta: #302816;
+  --errore: #ec8f86;
+  --errore-tinta: #33201e;
+  --ombra: none;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--testo);
+  font: 400 16px/1.55 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--serif);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.4em;
+}
+h1 { font-size: clamp(1.75rem, 6vw, 2.4rem); }
+h2 { font-size: 1.35rem; }
+h3 { font-size: 1.1rem; }
+
+p { margin: 0 0 1em; }
+
+a {
+  color: var(--accento);
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accento);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ── Contenitori ─────────────────────────── */
+
+.pagina {
+  width: 100%;
+  max-width: var(--larghezza);
+  margin: 0 auto;
+  padding: 20px 16px calc(var(--nav-h) + 32px + env(safe-area-inset-bottom));
+}
+
+.carta {
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--raggio);
+  padding: 18px;
+  box-shadow: var(--ombra);
+}
+
+.pila { display: grid; gap: 12px; }
+.pila-l { display: grid; gap: 20px; }
+.riga { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.spinge { margin-left: auto; }
+
+.attenuato { color: var(--testo-2); }
+.piccolo { font-size: 0.875rem; }
+.etichetta-sezione {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--testo-3);
+  margin: 0 0 8px;
+}
+
+/* ── Pulsanti ────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font: 500 0.95rem/1 var(--sans);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primario { background: var(--accento); color: var(--accento-su); }
+.btn-primario:hover:not(:disabled) { background: var(--accento-hover); }
+.btn-secondario { background: transparent; color: var(--testo); border-color: var(--linea); }
+.btn-secondario:hover:not(:disabled) { background: var(--superficie-2); }
+.btn-tenue { background: var(--superficie-2); color: var(--testo); }
+.btn-pericolo { background: transparent; color: var(--errore); border-color: var(--linea); }
+.btn-pieno { width: 100%; }
+.btn-s { min-height: 38px; padding: 0 14px; font-size: 0.875rem; }
+
+/* ── Moduli ──────────────────────────────── */
+
+.campo { display: grid; gap: 6px; }
+.campo > label,
+.campo > .titolo-campo {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+.campo .aiuto { font-size: 0.825rem; color: var(--testo-2); }
+.facoltativo { font-weight: 400; color: var(--testo-3); }
+
+input[type='text'],
+input[type='number'],
+input[type='datetime-local'],
+input[type='email'],
+select,
+textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 14px;
+  border-radius: var(--raggio-s);
+  border: 1px solid var(--linea);
+  background: var(--superficie);
+  color: var(--testo);
+  font: 400 16px/1.4 var(--sans); /* 16px: iOS non fa zoom */
+  appearance: none;
+}
+textarea { resize: vertical; min-height: 110px; }
+select {
+  background-image: linear-gradient(45deg, transparent 50%, var(--testo-2) 50%),
+    linear-gradient(135deg, var(--testo-2) 50%, transparent 50%);
+  background-position: calc(100% - 20px) 52%, calc(100% - 15px) 52%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 40px;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accento);
+  box-shadow: 0 0 0 3px var(--accento-tinta);
+}
+.contatore { font-size: 0.775rem; color: var(--testo-3); text-align: right; }
+
+/* ── Avvisi e badge ─────────────────────── */
+
+.avviso {
+  border-radius: var(--raggio-s);
+  padding: 12px 14px;
+  font-size: 0.925rem;
+  background: var(--superficie-2);
+}
+.avviso-errore { background: var(--errore-tinta); color: var(--errore); }
+.avviso-ok { background: var(--ok-tinta); color: var(--ok); }
+.avviso-attenzione { background: var(--attenzione-tinta); color: var(--attenzione); }
+.avviso-accento { background: var(--accento-tinta); color: var(--testo); }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.775rem;
+  font-weight: 500;
+  white-space: nowrap;
+  background: var(--superficie-2);
+  color: var(--testo-2);
+}
+.badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.badge-inviata { color: var(--testo-2); }
+.badge-in_revisione { background: var(--accento-tinta); color: var(--accento); }
+.badge-da_modificare { background: var(--attenzione-tinta); color: var(--attenzione); }
+.badge-approvata,
+.badge-pianificata { background: var(--ok-tinta); color: var(--ok); }
+.badge-respinta { background: var(--errore-tinta); color: var(--errore); }
+
+/* ── Schede a scorrimento (filtri) ──────── */
+
+.schede {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 -16px;
+  padding: 2px 16px 4px;
+}
+.schede::-webkit-scrollbar { display: none; }
+.scheda {
+  flex: none;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--linea);
+  background: transparent;
+  color: var(--testo-2);
+  font: 500 0.85rem/1 var(--sans);
+  cursor: pointer;
+}
+.scheda[aria-pressed='true'] {
+  background: var(--testo);
+  color: var(--bg);
+  border-color: var(--testo);
+}
+
+/* ── Elenco di dati ─────────────────────── */
+
+.dati { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 0; font-size: 0.9rem; }
+.dati dt { color: var(--testo-3); }
+.dati dd { margin: 0; overflow-wrap: anywhere; }
+
+.vuoto {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--testo-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}

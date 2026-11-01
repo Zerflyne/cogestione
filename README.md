@@ -42,11 +42,11 @@ browser non può aggirarle.
 ### 1. Supabase
 
 1. Crea un progetto gratuito su [supabase.com](https://supabase.com) (regione: Europa).
-2. **SQL Editor** → incolla ed esegui `supabase/migrations/20261101000000_iniziale.sql`.
+2. **SQL Editor** → esegui in ordine i file di `supabase/migrations/` (sul progetto attuale è già fatto).
 3. **Authentication → Providers → Google**: attivalo con Client ID e Secret (vedi punto 2).
 4. **Authentication → URL Configuration**: in *Site URL* e *Redirect URLs* metti l'indirizzo del sito
    (es. `https://zerflyne.github.io/cogestione/`) e `http://localhost:5173/` per le prove.
-5. Funzione per l'accesso con codice, dal computer:
+5. Funzione per l'accesso con codice (sul progetto attuale è già pubblicata), dal computer:
    ```sh
    npx supabase login
    npx supabase link --project-ref <id-del-progetto>
@@ -74,8 +74,8 @@ browser non può aggirarle.
 
 ### 3. Sito su GitHub Pages
 
-1. *Settings → Secrets and variables → Actions → Variables*: crea `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`
-   (Supabase → Project Settings → API). La chiave *anon* è pubblica per natura.
+1. URL e chiave pubblica (*publishable*) di Supabase sono già nel file `.env`: sono pubbliche per natura,
+   la sicurezza la fanno le regole del database.
 2. *Settings → Pages → Source*: **GitHub Actions**.
 3. Ogni push su `main` pubblica il sito.
 
@@ -86,8 +86,7 @@ browser non può aggirarle.
 ## Sviluppo
 
 ```sh
-cp .env.example .env.local   # inserisci URL e chiave anon
-npm install
+npm install                   # .env punta già al progetto Supabase
 npm run dev                   # http://localhost:5173
 npm run check                 # controlli
 npm run build                 # versione da pubblicare in dist/

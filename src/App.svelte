@@ -32,8 +32,8 @@
     <div class="carta pila">
       <h1>Da configurare</h1>
       <p class="attenuato">
-        Manca il collegamento a Supabase. Copia <code>.env.example</code> in <code>.env.local</code> e inserisci URL e
-        chiave del progetto. Le istruzioni complete sono nel README.
+        Manca il collegamento a Supabase: controlla URL e chiave nel file <code>.env</code>. Le istruzioni
+        complete sono nel README.
       </p>
     </div>
   </main>

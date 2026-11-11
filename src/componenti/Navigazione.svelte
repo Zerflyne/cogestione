@@ -17,8 +17,8 @@
     app.sessione
       ? [
           { id: 'home', testo: 'Home' },
-          { id: 'proponi', testo: 'Proponi' },
           { id: 'proposte', testo: 'Le mie' },
+          { id: 'proponi', testo: 'Proponi', centrale: true },
           ...(isAdmin() ? [{ id: 'revisione', testo: 'Revisione' }] : []),
           { id: 'profilo', testo: 'Profilo' },
         ]
@@ -32,12 +32,19 @@
 <nav aria-label="Navigazione principale">
   <ul>
     {#each voci as v (v.id)}
+      {@const corrente = attiva === v.id}
       <li>
-        <a href={v.id === 'home' ? '#/' : `#/${v.id}`} aria-current={attiva === v.id ? 'page' : undefined}>
-          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-            <path d={icone[v.id]} />
-          </svg>
-          <span>{v.testo}</span>
+        <a
+          href={v.id === 'home' ? '#/' : `#/${v.id}`}
+          class:corrente
+          class:centrale={v.centrale}
+          aria-current={corrente ? 'page' : undefined}
+          aria-label={v.testo}
+        >
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d={icone[v.id]} /></svg>
+          {#if !v.centrale}
+            <span class="etichetta"><span>{v.testo}</span></span>
+          {/if}
         </a>
       </li>
     {/each}
@@ -47,60 +54,94 @@
 <style>
   nav {
     position: fixed;
-    inset: auto 0 0 0;
-    z-index: 10;
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
-    backdrop-filter: saturate(1.4) blur(14px);
-    -webkit-backdrop-filter: saturate(1.4) blur(14px);
-    border-top: 1px solid var(--linea);
-    padding-bottom: env(safe-area-inset-bottom);
+    left: 50%;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    z-index: 20;
+    animation: entra 0.6s var(--molla) both;
+  }
+  @keyframes entra {
+    from { transform: translate(-50%, 24px); opacity: 0; }
   }
   ul {
     display: flex;
-    max-width: var(--larghezza);
-    margin: 0 auto;
-    padding: 0 4px;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 6px;
     list-style: none;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--superficie) 78%, transparent);
+    backdrop-filter: saturate(1.6) blur(18px);
+    -webkit-backdrop-filter: saturate(1.6) blur(18px);
+    border: 1px solid color-mix(in srgb, var(--linea) 80%, transparent);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.06) inset,
+      0 12px 32px -12px rgb(20 20 19 / 0.28);
   }
-  li { flex: 1; }
+
   a {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 3px;
-    height: var(--nav-h);
-    color: var(--testo-3);
+    height: 48px;
+    padding: 0 13px;
+    border-radius: 999px;
+    color: var(--testo-2);
     text-decoration: none;
-    font-size: 0.7rem;
-    font-weight: 500;
+    font: 500 0.875rem/1 var(--sans);
+    transition: background 0.35s var(--morbida), color 0.35s var(--morbida), transform 0.25s var(--molla);
   }
-  a[aria-current='page'] { color: var(--accento); }
+  a:active { transform: scale(0.92); }
+  a:hover:not(.corrente):not(.centrale) { color: var(--testo); }
+
+  /* L'etichetta si apre solo per la voce attiva. */
+  .etichetta {
+    display: grid;
+    grid-template-columns: 0fr;
+    transition: grid-template-columns 0.4s var(--morbida), margin 0.4s var(--morbida);
+  }
+  .etichetta > span {
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .corrente {
+    background: var(--accento-tinta);
+    color: var(--accento);
+  }
+  .corrente .etichetta { grid-template-columns: 1fr; margin-left: 8px; }
+  .corrente .etichetta > span { opacity: 1; transition-delay: 0.08s; }
+
+  /* Il "+" centrale è il gesto principale: sempre in evidenza. */
+  .centrale {
+    width: 48px;
+    padding: 0;
+    justify-content: center;
+    background: var(--accento);
+    color: var(--accento-su);
+    box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--accento) 70%, transparent);
+  }
+  .centrale svg { transition: transform 0.4s var(--molla); }
+  .centrale:hover svg,
+  .centrale.corrente svg { transform: rotate(90deg); }
+
+  svg { flex: none; }
   svg path {
     fill: none;
     stroke: currentColor;
-    stroke-width: 1.7;
+    stroke-width: 1.8;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
+  .centrale svg path { stroke-width: 2.2; }
 
-  /* Su schermi larghi la barra sale in alto. */
+  /* Su schermi larghi il dock sale in alto. */
   @media (min-width: 900px) {
-    nav {
-      inset: 0 0 auto 0;
-      border-top: 0;
-      border-bottom: 1px solid var(--linea);
-      padding-bottom: 0;
+    nav { top: 16px; bottom: auto; }
+    @keyframes entra {
+      from { transform: translate(-50%, -24px); opacity: 0; }
     }
-    ul { justify-content: center; gap: 8px; }
-    li { flex: none; }
-    a {
-      flex-direction: row;
-      gap: 8px;
-      height: 56px;
-      padding: 0 14px;
-      font-size: 0.9rem;
-    }
-    :global(.pagina) { padding-top: 88px !important; padding-bottom: 48px !important; }
+    :global(.pagina) { padding-top: 104px !important; padding-bottom: 48px !important; }
   }
 </style>

@@ -27,6 +27,12 @@
   --raggio-s: 10px;
   --larghezza: 720px;
   --nav-h: 64px;
+  --dock-spazio: calc(var(--nav-h) + 36px + env(safe-area-inset-bottom));
+  --molla: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --morbida: cubic-bezier(0.22, 1, 0.36, 1);
+  --aurora-1: #b48ae6;
+  --aurora-2: #e7b8d9;
+  --aurora-3: #9db7f0;
 
   color-scheme: light;
 }
@@ -51,6 +57,9 @@
     --errore: #ec8f86;
     --errore-tinta: #33201e;
     --ombra: none;
+    --aurora-1: #5b3591;
+    --aurora-2: #6e2f5c;
+    --aurora-3: #2f4a85;
     color-scheme: dark;
   }
 }
@@ -74,6 +83,9 @@
   --errore: #ec8f86;
   --errore-tinta: #33201e;
   --ombra: none;
+  --aurora-1: #5b3591;
+  --aurora-2: #6e2f5c;
+  --aurora-3: #2f4a85;
   color-scheme: dark;
 }
 
@@ -87,6 +99,9 @@ html {
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
 }
+
+html,
+body { overflow-x: clip; }
 
 body {
   margin: 0;
@@ -128,10 +143,11 @@ a {
   width: 100%;
   max-width: var(--larghezza);
   margin: 0 auto;
-  padding: 20px 16px calc(var(--nav-h) + 32px + env(safe-area-inset-bottom));
+  padding: 20px 16px var(--dock-spazio);
 }
 
 .carta {
+  transition: transform 0.3s var(--morbida), box-shadow 0.3s var(--morbida), border-color 0.3s;
   background: var(--superficie);
   border: 1px solid var(--linea);
   border-radius: var(--raggio);
@@ -169,13 +185,19 @@ a {
   font: 500 0.95rem/1 var(--sans);
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.25s var(--molla), box-shadow 0.25s;
   -webkit-user-select: none;
   user-select: none;
 }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-primario { background: var(--accento); color: var(--accento-su); }
-.btn-primario:hover:not(:disabled) { background: var(--accento-hover); }
+.btn-primario:hover:not(:disabled) {
+  background: var(--accento-hover);
+  box-shadow: 0 6px 20px -6px color-mix(in srgb, var(--accento) 60%, transparent);
+}
+.btn:active:not(:disabled) { transform: scale(0.97); }
+.btn .freccia { transition: transform 0.3s var(--molla); }
+.btn:hover .freccia { transform: translateX(4px); }
 .btn-secondario { background: transparent; color: var(--testo); border-color: var(--linea); }
 .btn-secondario:hover:not(:disabled) { background: var(--superficie-2); }
 .btn-tenue { background: var(--superficie-2); color: var(--testo); }
@@ -306,6 +328,53 @@ textarea:focus {
   text-align: center;
   padding: 40px 16px;
   color: var(--testo-2);
+}
+
+/* ── Movimento ─────────────────────────── */
+
+.carta-viva:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accento) 30%, var(--linea)); }
+.premuto { transform: scale(0.985) !important; }
+
+.appare {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s var(--morbida) var(--ritardo, 0ms), transform 0.6s var(--morbida) var(--ritardo, 0ms);
+}
+.appare.visibile { opacity: 1; transform: none; }
+
+/* Sfondo "aurora": macchie di colore sfocate che si muovono piano. */
+.aurora {
+  position: absolute;
+  inset: -80px 0 auto;
+  height: 420px;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent);
+  mask-image: linear-gradient(to bottom, #000 40%, transparent);
+}
+.aurora span {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
+  animation: deriva 18s ease-in-out infinite alternate;
+}
+.aurora span:nth-child(1) { background: var(--aurora-1); top: 20px; left: -60px; }
+.aurora span:nth-child(2) { background: var(--aurora-2); top: 60px; right: -80px; animation-duration: 22s; animation-delay: -6s; }
+.aurora span:nth-child(3) { background: var(--aurora-3); top: 160px; left: 30%; width: 260px; height: 260px; animation-duration: 26s; animation-delay: -12s; }
+@keyframes deriva {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, 30px) scale(1.12); }
+  100% { transform: translate(-30px, 10px) scale(0.95); }
+}
+
+.pulsa::before { animation: pulsa-punto 1.8s ease-in-out infinite; }
+@keyframes pulsa-punto {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 50%, transparent); }
+  50% { box-shadow: 0 0 0 5px transparent; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,5 +1,7 @@
 <script>
   import { onMount } from 'svelte';
+  import { fly } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
   import { configurato } from './lib/supabase.js';
   import { app, avvia, isAdmin, profiloCompleto } from './lib/stato.svelte.js';
   import Navigazione from './componenti/Navigazione.svelte';
@@ -12,6 +14,7 @@
   import Impostazioni from './pagine/Impostazioni.svelte';
 
   onMount(avvia);
+  const riduci = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const serveAccesso = ['profilo', 'proponi', 'proposte', 'revisione', 'impostazioni'];
   const soloAdmin = ['revisione', 'impostazioni'];
@@ -43,12 +46,14 @@
   </main>
 {:else}
   <main>
+    {#key pagina + (app.rotta.param ?? '')}
+    <div class="vista" in:fly={{ y: 14, duration: riduci ? 0 : 420, easing: cubicOut }}>
     {#if pagina === 'accesso'}
       <Accesso />
     {:else if pagina === 'profilo'}
       <Profilo />
     {:else if pagina === 'proponi'}
-      {#key app.rotta.param}<Proponi id={app.rotta.param} />{/key}
+      <Proponi id={app.rotta.param} />
     {:else if pagina === 'proposte'}
       <MieProposte />
     {:else if pagina === 'revisione'}
@@ -58,11 +63,14 @@
     {:else}
       <Home />
     {/if}
+    </div>
+    {/key}
   </main>
   <Navigazione attiva={pagina} />
 {/if}
 
 <style>
+  .vista { position: relative; isolation: isolate; }
   .caricamento {
     display: grid;
     place-items: center;

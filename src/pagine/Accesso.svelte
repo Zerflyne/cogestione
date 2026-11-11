@@ -53,8 +53,9 @@
   }
 </script>
 
-<div class="pagina pila-l">
-  <header>
+<div class="pagina pila-l" style="position: relative">
+  <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+  <header style="padding-top: 28px">
     <h1>Accedi</h1>
     <p class="attenuato">Serve per proporre un corso e, più avanti, per iscriverti.</p>
   </header>

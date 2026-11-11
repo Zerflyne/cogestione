@@ -2,6 +2,10 @@
   import { supabase } from '../lib/supabase.js';
   import { app } from '../lib/stato.svelte.js';
   import { STATI, AULE, messaggioErrore } from '../lib/etichette.js';
+  import { flip } from 'svelte/animate';
+  import { fade } from 'svelte/transition';
+  import { appare } from '../lib/azioni.js';
+  import Scheletro from '../componenti/Scheletro.svelte';
 
   let corsi = $state([]);
   let caricamento = $state(true);
@@ -46,7 +50,7 @@
   {#if errore}<div class="avviso avviso-errore" role="alert">{errore}</div>{/if}
 
   {#if caricamento}
-    <p class="attenuato">Caricamento…</p>
+    <Scheletro righe={2} />
   {:else if corsi.length === 0}
     <div class="vuoto carta">
       <p>Non hai ancora proposto nessun corso.</p>
@@ -54,10 +58,10 @@
     </div>
   {:else}
     <ul class="elenco">
-      {#each corsi as c (c.id)}
-        <li class="carta pila">
+      {#each corsi as c, i (c.id)}
+        <li class="carta carta-viva pila" use:appare={{ ritardo: i * 70 }} animate:flip={{ duration: 300 }} out:fade={{ duration: 180 }}>
           <div class="riga">
-            <span class="badge badge-{c.stato}">{STATI[c.stato]}</span>
+            <span class="badge badge-{c.stato}" class:pulsa={c.stato === 'in_revisione'}>{STATI[c.stato]}</span>
             <span class="attenuato piccolo spinge">{AULE[c.aula_richiesta]}</span>
           </div>
           <h2>{c.titolo}</h2>

@@ -2,6 +2,9 @@
   import { supabase } from '../lib/supabase.js';
   import { app, vai } from '../lib/stato.svelte.js';
   import { AULE, messaggioErrore, formatoData } from '../lib/etichette.js';
+  import { slide } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
+  import Scheletro from '../componenti/Scheletro.svelte';
 
   let { id = null } = $props();
 
@@ -96,7 +99,7 @@
   </header>
 
   {#if caricamento}
-    <p class="attenuato">Caricamento…</p>
+    <Scheletro righe={2} />
   {:else if !aperte}
     <div class="avviso avviso-attenzione">
       Le proposte non sono aperte in questo momento.
@@ -154,7 +157,7 @@
         </div>
 
         {#if palestra}
-          <div class="campo">
+          <div class="campo" transition:slide={{ duration: 300, easing: cubicOut }}>
             <label for="palestra">Descrivi l'attività in palestra</label>
             <textarea
               id="palestra"
@@ -176,7 +179,7 @@
         </div>
 
         {#if semplice}
-          <div class="campo">
+          <div class="campo" transition:slide={{ duration: 300, easing: cubicOut }}>
             <label for="preferenza">Preferenza oraria <span class="facoltativo">· facoltativo</span></label>
             <input id="preferenza" type="text" maxlength="200" bind:value={f.preferenza_oraria} placeholder="es. mattina del primo giorno" />
             <span class="aiuto">È una preferenza, non una garanzia: il calendario lo compongono i rappresentanti.</span>

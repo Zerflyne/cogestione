@@ -1,6 +1,10 @@
 <script>
   import { supabase } from '../lib/supabase.js';
   import { STATI, AULE, messaggioErrore, formatoData } from '../lib/etichette.js';
+  import { flip } from 'svelte/animate';
+  import { fade, slide } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
+  import Scheletro from '../componenti/Scheletro.svelte';
 
   let corsi = $state([]);
   let caricamento = $state(true);
@@ -85,16 +89,16 @@
   {#if errore}<div class="avviso avviso-errore" role="alert">{errore}</div>{/if}
 
   {#if caricamento}
-    <p class="attenuato">Caricamento…</p>
+    <Scheletro righe={3} />
   {:else if visibili.length === 0}
     <div class="vuoto carta">Niente qui.</div>
   {:else}
     <ul class="elenco">
       {#each visibili as c (c.id)}
-        <li class="carta pila">
+        <li class="carta carta-viva pila" animate:flip={{ duration: 350, easing: cubicOut }} in:fade={{ duration: 220 }}>
           <button class="intestazione" onclick={() => apri(c)} aria-expanded={aperto === c.id}>
             <div class="riga">
-              <span class="badge badge-{c.stato}">{STATI[c.stato]}</span>
+              <span class="badge badge-{c.stato}" class:pulsa={c.stato === 'in_revisione'}>{STATI[c.stato]}</span>
               <span class="attenuato piccolo spinge">{AULE[c.aula_richiesta]}</span>
             </div>
             <h2>{c.titolo}</h2>
@@ -105,7 +109,7 @@
           </button>
 
           {#if aperto === c.id}
-            <div class="pila dettaglio">
+            <div class="pila dettaglio" transition:slide={{ duration: 320, easing: cubicOut }}>
               <p>{c.descrizione}</p>
               <dl class="dati">
                 {#if c.attivita_palestra}<dt>Attività</dt><dd>{c.attivita_palestra}</dd>{/if}

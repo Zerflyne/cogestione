@@ -75,7 +75,7 @@
     </ol>
   </section>
 
-  <footer class="attenuato piccolo">Rappresentanti degli studenti · IIS Evangelista Torricelli</footer>
+  <footer class="attenuato piccolo">Rappresentanti degli studenti · IIS Evangelista Torricelli<br /><a href="./privacy.html">Privacy</a></footer>
 </div>
 
 <style>

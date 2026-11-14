@@ -77,7 +77,7 @@
     border: 1px solid color-mix(in srgb, var(--linea) 80%, transparent);
     box-shadow:
       0 1px 0 rgb(255 255 255 / 0.06) inset,
-      0 12px 32px -12px rgb(20 20 19 / 0.28);
+      0 12px 32px -12px rgb(70 20 50 / 0.3);
   }
 
   a {

@@ -172,7 +172,7 @@
   }
   .eroe h1 span { display: block; }
   .accento {
-    background: linear-gradient(100deg, var(--accento), color-mix(in srgb, var(--accento) 55%, #e07ab8));
+    background: linear-gradient(100deg, var(--accento), color-mix(in srgb, var(--accento) 50%, #d6457f));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;

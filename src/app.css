@@ -2,24 +2,24 @@
    Neutri caldi, titoli con grazie, accento porpora. Pensato prima per il telefono. */
 
 :root {
-  --bg: #faf9f5;
+  --bg: #fbf7f9;
   --superficie: #ffffff;
-  --superficie-2: #f0eee6;
-  --linea: #e3e0d6;
-  --testo: #1f1e1b;
-  --testo-2: #5e5d59;
-  --testo-3: #8a8880;
-  --accento: #6b3fa0;
-  --accento-hover: #573287;
+  --superficie-2: #f4eaf0;
+  --linea: #e9dae3;
+  --testo: #241a20;
+  --testo-2: #65555f;
+  --testo-3: #917f8a;
+  --accento: #7a1f5c;
+  --accento-hover: #63174a;
   --accento-su: #ffffff;
-  --accento-tinta: #f1eaf8;
+  --accento-tinta: #f6e6f0;
   --ok: #3f7a4f;
   --ok-tinta: #e7f2ea;
   --attenzione: #9a6a12;
   --attenzione-tinta: #f8efdc;
   --errore: #b03a3a;
   --errore-tinta: #f8e6e4;
-  --ombra: 0 1px 2px rgb(20 20 19 / 0.04), 0 4px 16px rgb(20 20 19 / 0.04);
+  --ombra: 0 1px 2px rgb(70 20 50 / 0.05), 0 4px 16px rgb(70 20 50 / 0.05);
 
   --serif: 'Source Serif 4', 'Iowan Old Style', Georgia, serif;
   --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -30,26 +30,26 @@
   --dock-spazio: calc(var(--nav-h) + 36px + env(safe-area-inset-bottom));
   --molla: cubic-bezier(0.34, 1.4, 0.64, 1);
   --morbida: cubic-bezier(0.22, 1, 0.36, 1);
-  --aurora-1: #b48ae6;
-  --aurora-2: #e7b8d9;
-  --aurora-3: #9db7f0;
+  --aurora-1: #c2579a;
+  --aurora-2: #eaa3c8;
+  --aurora-3: #9b4fa3;
 
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #141413;
-    --superficie: #1f1e1d;
-    --superficie-2: #262624;
-    --linea: #33322f;
-    --testo: #ecebe4;
-    --testo-2: #b0aea5;
-    --testo-3: #85837c;
-    --accento: #b99be6;
-    --accento-hover: #cbb3ef;
-    --accento-su: #1a1424;
-    --accento-tinta: #2a2335;
+    --bg: #160f14;
+    --superficie: #21171e;
+    --superficie-2: #2a1e26;
+    --linea: #3a2b34;
+    --testo: #f2e9ee;
+    --testo-2: #c0aeb8;
+    --testo-3: #8f7d88;
+    --accento: #c2508f;
+    --accento-hover: #d06aa2;
+    --accento-su: #ffffff;
+    --accento-tinta: #3a1d30;
     --ok: #8cc79c;
     --ok-tinta: #1e2c22;
     --attenzione: #e0b866;
@@ -57,25 +57,25 @@
     --errore: #ec8f86;
     --errore-tinta: #33201e;
     --ombra: none;
-    --aurora-1: #5b3591;
-    --aurora-2: #6e2f5c;
-    --aurora-3: #2f4a85;
+    --aurora-1: #7a1f5c;
+    --aurora-2: #9c2f6a;
+    --aurora-3: #4f1f63;
     color-scheme: dark;
   }
 }
 
 :root[data-theme='dark'] {
-  --bg: #141413;
-  --superficie: #1f1e1d;
-  --superficie-2: #262624;
-  --linea: #33322f;
-  --testo: #ecebe4;
-  --testo-2: #b0aea5;
-  --testo-3: #85837c;
-  --accento: #b99be6;
-  --accento-hover: #cbb3ef;
-  --accento-su: #1a1424;
-  --accento-tinta: #2a2335;
+  --bg: #160f14;
+  --superficie: #21171e;
+  --superficie-2: #2a1e26;
+  --linea: #3a2b34;
+  --testo: #f2e9ee;
+  --testo-2: #c0aeb8;
+  --testo-3: #8f7d88;
+  --accento: #c2508f;
+  --accento-hover: #d06aa2;
+  --accento-su: #ffffff;
+  --accento-tinta: #3a1d30;
   --ok: #8cc79c;
   --ok-tinta: #1e2c22;
   --attenzione: #e0b866;
@@ -83,9 +83,9 @@
   --errore: #ec8f86;
   --errore-tinta: #33201e;
   --ombra: none;
-  --aurora-1: #5b3591;
-  --aurora-2: #6e2f5c;
-  --aurora-3: #2f4a85;
+  --aurora-1: #7a1f5c;
+  --aurora-2: #9c2f6a;
+  --aurora-3: #4f1f63;
   color-scheme: dark;
 }
 

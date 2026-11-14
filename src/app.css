@@ -220,6 +220,7 @@ input[type='text'],
 input[type='number'],
 input[type='datetime-local'],
 input[type='email'],
+input[type='search'],
 select,
 textarea {
   width: 100%;
@@ -379,4 +380,12 @@ textarea:focus {
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
+}
+
+/* Stampa: solo il contenuto della pagina, senza dock né sfondi. */
+@media print {
+  @page { margin: 12mm; }
+  html, body { background: #fff !important; }
+  nav, .aurora { display: none !important; }
+  .pagina { padding: 0 !important; max-width: none; }
 }

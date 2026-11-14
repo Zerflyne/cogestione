@@ -43,12 +43,6 @@
     await caricaImpostazioni();
   }
 
-  async function generaCodici() {
-    errore = messaggio = null;
-    const { data, error } = await supabase.rpc('genera_codici');
-    if (error) return (errore = messaggioErrore(error));
-    messaggio = data === 0 ? 'Tutti gli studenti hanno già un codice.' : `Generati ${data} codici.`;
-  }
 </script>
 
 <div class="pagina pila-l">
@@ -70,6 +64,7 @@
       </select>
       <span class="aiuto">Decide cosa vedono e possono fare gli studenti. Le proposte si inviano solo nella fase "Proposte aperte".</span>
     </div>
+
     <div class="campo">
       <label for="apertura">Apertura delle proposte</label>
       <input id="apertura" type="datetime-local" bind:value={apertura} />
@@ -95,12 +90,12 @@
     {/if}
   </section>
 
-  <section class="carta pila">
-    <p class="etichetta-sezione" style="margin:0">Codici personali</p>
-    <p class="attenuato piccolo" style="margin:0">
-      Genera un codice di accesso per ogni studente dell'elenco che non ne ha ancora uno. Caricamento dell'elenco,
-      invio per email e fogli da stampare arrivano nella prossima versione.
-    </p>
-    <button class="btn btn-secondario btn-pieno" onclick={generaCodici}>Genera i codici mancanti</button>
-  </section>
+  <a class="carta carta-viva pila collegamento" href="#/studenti">
+    <p class="etichetta-sezione" style="margin:0">Studenti e codici</p>
+    <span class="attenuato piccolo">Carica l'elenco della scuola, genera i codici personali, stampa i foglietti per classe.</span>
+  </a>
 </div>
+
+<style>
+  .collegamento { text-decoration: none; color: var(--testo); }
+</style>

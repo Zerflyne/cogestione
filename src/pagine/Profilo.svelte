@@ -92,6 +92,7 @@
 
     {#if isAdmin()}
       <a class="btn btn-secondario btn-pieno" href="#/impostazioni">Impostazioni della cogestione</a>
+      <a class="btn btn-tenue btn-pieno" href="#/studenti">Studenti e codici</a>
     {/if}
   {/if}
 

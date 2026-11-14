@@ -12,12 +12,13 @@
   import MieProposte from './pagine/MieProposte.svelte';
   import Revisione from './pagine/Revisione.svelte';
   import Impostazioni from './pagine/Impostazioni.svelte';
+  import Studenti from './pagine/Studenti.svelte';
 
   onMount(avvia);
   const riduci = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const serveAccesso = ['profilo', 'proponi', 'proposte', 'revisione', 'impostazioni'];
-  const soloAdmin = ['revisione', 'impostazioni'];
+  const serveAccesso = ['profilo', 'proponi', 'proposte', 'revisione', 'impostazioni', 'studenti'];
+  const soloAdmin = ['revisione', 'impostazioni', 'studenti'];
 
   // Decide quale pagina mostrare, con i controlli di accesso.
   let pagina = $derived.by(() => {
@@ -60,6 +61,8 @@
       <Revisione />
     {:else if pagina === 'impostazioni'}
       <Impostazioni />
+    {:else if pagina === 'studenti'}
+      <Studenti />
     {:else}
       <Home />
     {/if}

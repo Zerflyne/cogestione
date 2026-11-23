@@ -1,6 +1,7 @@
 <script>
   import { supabase, inApp } from '../lib/supabase.js';
   import { app } from '../lib/stato.svelte.js';
+  import Schizzo from '../componenti/Schizzo.svelte';
 
   let codice = $state('');
   let inCorso = $state(false);
@@ -55,7 +56,7 @@
 
 <div class="pagina pila-l">
   <header class="intestazione-pagina">
-    <h1>Accedi</h1>
+    <h1 class="con-segno">Accedi<Schizzo nome="scintille" class="scintille" ritardo={300} /></h1>
     <p class="attenuato">Serve per proporre un corso e, più avanti, per iscriverti.</p>
   </header>
 
@@ -111,6 +112,8 @@
 </div>
 
 <style>
+  .con-segno { position: relative; justify-self: start; }
+  .con-segno :global(.scintille) { position: absolute; right: -40px; top: -14px; width: 34px; height: 34px; color: var(--rosso); }
   .separatore {
     display: flex;
     align-items: center;

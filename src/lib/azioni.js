@@ -60,3 +60,51 @@ export function siAccende(nodo, { da = 0.85, a = 0.45 } = {}) {
     },
   };
 }
+
+const ridotto = () => typeof window === 'undefined' || matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Esegue `fatto` quando il nodo entra nello schermo (una volta sola).
+function quandoVisibile(nodo, fatto, margine = '0px 0px -10% 0px') {
+  if (typeof IntersectionObserver === 'undefined') {
+    fatto();
+    return () => {};
+  }
+  const o = new IntersectionObserver(
+    (voci) => {
+      if (voci.some((v) => v.isIntersecting)) {
+        fatto();
+        o.disconnect();
+      }
+    },
+    { rootMargin: margine },
+  );
+  o.observe(nodo);
+  return () => o.disconnect();
+}
+
+// Comparsa morbida (sale, si mette a fuoco) quando l'elemento entra nello schermo.
+// Uso: <div use:appare> oppure <div use:appare={{ ritardo: 80 }}>
+export function appare(nodo, { ritardo = 0 } = {}) {
+  if (ridotto()) return {};
+  nodo.classList.add('appare');
+  nodo.style.setProperty('--ritardo', `${ritardo}ms`);
+  const stop = quandoVisibile(nodo, () => requestAnimationFrame(() => nodo.classList.add('visibile')));
+  return { destroy: stop };
+}
+
+// Disegnino a mano che si traccia da solo: ogni elemento con data-tratto si disegna,
+// uno dopo l'altro, quando l'SVG entra nello schermo.
+// Uso: <svg class="schizzo" use:disegna={{ ritardo: 300, passo: 160 }}>…<path data-tratto d="…"/></svg>
+export function disegna(nodo, { ritardo = 0, passo = 140, durata = 900 } = {}) {
+  if (ridotto()) return {};
+  const tratti = [...nodo.querySelectorAll('[data-tratto]')];
+  tratti.forEach((t, i) => {
+    const l = Math.ceil(t.getTotalLength?.() ?? 1000) + 2;
+    t.style.setProperty('--l', l);
+    t.style.setProperty('--d', `${ritardo + i * passo}ms`);
+    t.style.setProperty('--durata', `${t.dataset.durata ?? durata}ms`);
+  });
+  nodo.classList.add('da-disegnare');
+  const stop = quandoVisibile(nodo, () => requestAnimationFrame(() => nodo.classList.add('disegnato')), '0px');
+  return { destroy: stop };
+}

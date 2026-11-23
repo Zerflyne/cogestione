@@ -1,29 +1,39 @@
 /* Cogestione · sistema visivo
-   Rifatto seguendo taste-skill: un solo sistema (spaziature, tipo, raggi, pulsanti, carte),
-   interfaccia quasi tutta neutra, un solo accento porpora, movimento solo dove serve
-   (ingresso della home, risposta al puntatore, una frase che si accende).
+   Un solo sistema (spaziature, tipo, raggi, pulsanti, carte) da taste-skill, con vetro,
+   disegnini a mano e animazioni. Palette sobria: inchiostro e grigi caldi, porpora solo
+   nei particolari, rosso #9E0000 per il segno a mano e le cose che contano.
    Pensato prima per il telefono. */
 
 :root {
-  /* Fondi e testo: neutri appena caldi, l'accento resta l'unico colore. */
-  --bg: #faf8f9;
+  /* Fondi e testo: grigi caldi e inchiostro. */
+  --bg: #f6f6f3;
   --superficie: #ffffff;
-  --superficie-2: #f3eff1;
-  --linea: color-mix(in oklab, var(--testo) 12%, transparent);
-  --linea-forte: color-mix(in oklab, var(--testo) 24%, transparent);
-  --testo: #1c1418;
-  --testo-2: #5e525a;
-  --testo-3: #6c6067;
+  --superficie-2: #eeeeea;
+  --linea: color-mix(in oklab, var(--testo) 11%, transparent);
+  --linea-forte: color-mix(in oklab, var(--testo) 22%, transparent);
+  --testo: #141413;
+  --testo-2: #55554f;
+  --testo-3: #64645e;
+  /* Azione principale: inchiostro. Il colore resta per i dettagli. */
+  --azione: #141413;
+  --azione-su: #ffffff;
+  /* Porpora: solo piccoli particolari (logo, fuoco, segni della pagina corrente). */
   --accento: #7a1f5c;
   --accento-su: #ffffff;
-  --accento-tinta: #f5e9f0;
+  --accento-tinta: #f4e9ef;
+  /* Rosso: il segno a mano, le cose che contano. */
+  --rosso: #9e0000;
+  --rosso-tinta: #f7e5e3;
   --ok: #2f6b40;
-  --ok-tinta: #e8f3eb;
+  --ok-tinta: #e7f1e9;
   --attenzione: #8a5a00;
-  --attenzione-tinta: #faefd9;
-  --errore: #a8332f;
-  --errore-tinta: #fae7e5;
-  --ombra-su: 0 12px 24px -12px color-mix(in oklab, var(--testo) 10%, transparent);
+  --attenzione-tinta: #f8eed9;
+  --errore: #9e0000;
+  --errore-tinta: #f7e5e3;
+  --vetro: color-mix(in oklab, var(--superficie) 70%, transparent);
+  --vetro-bordo: color-mix(in oklab, var(--testo) 9%, transparent);
+  --puntini: color-mix(in oklab, var(--testo) 13%, transparent);
+  --ombra-su: 0 16px 32px -16px color-mix(in oklab, var(--testo) 18%, transparent);
 
   /* Tipo: Gabarito per i titoli, Figtree per il testo, DM Mono per i codici. */
   --serif: 'Gabarito', system-ui, sans-serif;
@@ -64,43 +74,57 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #131012;
-    --superficie: #1d181b;
-    --superficie-2: #262024;
-    --testo: #f4eff1;
-    --testo-2: #b4a8ae;
-    --testo-3: #a3969d;
-    --accento: #e58bb9;
+    --bg: #0f0f0e;
+    --superficie: #181817;
+    --superficie-2: #232321;
+    --testo: #f2f2ef;
+    --testo-2: #aaaaa3;
+    --testo-3: #98988f;
+    --azione: #f2f2ef;
+    --azione-su: #111110;
+    --accento: #d98bb8;
     --accento-su: #2a0a1c;
-    --accento-tinta: #33202a;
+    --accento-tinta: #2c1c25;
+    --rosso: #f0524a;
+    --rosso-tinta: #331a18;
     --ok: #8fcf9f;
     --ok-tinta: #1a2a1f;
     --attenzione: #e8c16f;
     --attenzione-tinta: #2e2714;
-    --errore: #f09a90;
-    --errore-tinta: #33201e;
-    --ombra-su: 0 12px 24px -12px rgb(0 0 0 / 0.5);
+    --errore: #f0524a;
+    --errore-tinta: #331a18;
+    --vetro: color-mix(in oklab, var(--superficie) 62%, transparent);
+    --vetro-bordo: rgb(255 255 255 / 0.08);
+    --puntini: rgb(255 255 255 / 0.09);
+    --ombra-su: 0 16px 32px -16px rgb(0 0 0 / 0.6);
     color-scheme: dark;
   }
 }
 
 :root[data-theme='dark'] {
-  --bg: #131012;
-  --superficie: #1d181b;
-  --superficie-2: #262024;
-  --testo: #f4eff1;
-  --testo-2: #b4a8ae;
-  --testo-3: #a3969d;
-  --accento: #e58bb9;
+  --bg: #0f0f0e;
+  --superficie: #181817;
+  --superficie-2: #232321;
+  --testo: #f2f2ef;
+  --testo-2: #aaaaa3;
+  --testo-3: #98988f;
+  --azione: #f2f2ef;
+  --azione-su: #111110;
+  --accento: #d98bb8;
   --accento-su: #2a0a1c;
-  --accento-tinta: #33202a;
+  --accento-tinta: #2c1c25;
+  --rosso: #f0524a;
+  --rosso-tinta: #331a18;
   --ok: #8fcf9f;
   --ok-tinta: #1a2a1f;
   --attenzione: #e8c16f;
   --attenzione-tinta: #2e2714;
-  --errore: #f09a90;
-  --errore-tinta: #33201e;
-  --ombra-su: 0 12px 24px -12px rgb(0 0 0 / 0.5);
+  --errore: #f0524a;
+  --errore-tinta: #331a18;
+  --vetro: color-mix(in oklab, var(--superficie) 62%, transparent);
+  --vetro-bordo: rgb(255 255 255 / 0.08);
+  --puntini: rgb(255 255 255 / 0.09);
+  --ombra-su: 0 16px 32px -16px rgb(0 0 0 / 0.6);
   color-scheme: dark;
 }
 
@@ -123,7 +147,11 @@ html,
 body { margin: 0; overflow-x: clip; }
 
 body {
-  background: var(--bg);
+  background-color: var(--bg);
+  /* Carta a puntini, come un quaderno da schizzi. */
+  background-image: radial-gradient(var(--puntini) 1px, transparent 1.2px);
+  background-size: 22px 22px;
+  background-attachment: fixed;
   color: var(--testo);
   font: 400 var(--t-body) / 1.6 var(--sans);
   -webkit-font-smoothing: antialiased;
@@ -150,15 +178,15 @@ strong { font-weight: 500; }
 
 /* Un solo aspetto per i link: filo sottile a riposo, una linea d'inchiostro che si disegna. */
 a {
-  color: var(--accento);
+  color: var(--testo);
   text-decoration: none;
-  background-image: linear-gradient(currentColor, currentColor), linear-gradient(var(--linea-forte), var(--linea-forte));
+  background-image: linear-gradient(currentColor, currentColor), linear-gradient(color-mix(in oklab, var(--accento) 55%, transparent), color-mix(in oklab, var(--accento) 55%, transparent));
   background-size: 0% 1px, 100% 1px;
   background-position: 0 100%, 0 100%;
   background-repeat: no-repeat;
   transition: background-size var(--m-out) var(--ease);
 }
-a:hover { background-size: 100% 1px, 100% 1px; transition-duration: var(--m-in); }
+a:hover { color: var(--accento); background-size: 100% 1px, 100% 1px; transition-duration: var(--m-in); }
 a.btn,
 a.carta,
 header a,
@@ -187,8 +215,10 @@ nav a { background-image: none; }
 .intestazione-pagina p { margin: 0; color: var(--testo-2); font-size: var(--t-lead); line-height: 1.5; }
 
 .carta {
-  background: var(--superficie);
-  border: 1px solid var(--linea);
+  background: var(--vetro);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid var(--vetro-bordo);
   border-radius: var(--raggio-l);
   padding: var(--s-5);
 }
@@ -238,7 +268,7 @@ nav a { background-image: none; }
   user-select: none;
 }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-.btn-primario { background: var(--accento); color: var(--accento-su); }
+.btn-primario { background: var(--azione); color: var(--azione-su); }
 .btn-secondario { background: var(--superficie); color: var(--testo); border-color: var(--linea-forte); }
 .btn-tenue { background: var(--superficie-2); color: var(--testo); }
 .btn-pericolo { background: transparent; color: var(--errore); border-color: var(--linea-forte); }
@@ -250,7 +280,7 @@ nav a { background-image: none; }
 
 @media (hover: hover) and (pointer: fine) {
   .btn:hover:not(:disabled) { transform: translateY(-1px); transition-duration: var(--m-in); }
-  .btn-primario:hover:not(:disabled) { background: color-mix(in oklab, var(--accento) 86%, var(--testo)); }
+  .btn-primario:hover:not(:disabled) { background: color-mix(in oklab, var(--azione) 82%, var(--rosso)); }
   .btn-secondario:hover:not(:disabled),
   .btn-pericolo:hover:not(:disabled) { background: var(--superficie-2); border-color: color-mix(in oklab, var(--testo) 40%, transparent); }
   .btn-tenue:hover:not(:disabled) { background: color-mix(in oklab, var(--superficie-2) 86%, var(--testo)); }
@@ -421,7 +451,35 @@ code { font-family: var(--mono); }
 }
 a.carta-viva:active { transform: translateY(0) scale(0.995); transition-duration: var(--m-press); }
 
+/* Comparsa morbida allo scorrimento (use:appare). */
+.appare { opacity: 0; transform: translateY(18px); filter: blur(6px); }
+.appare.visibile {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: opacity 700ms var(--ease-entra) var(--ritardo, 0ms), transform 700ms var(--ease-entra) var(--ritardo, 0ms), filter 700ms var(--ease-entra) var(--ritardo, 0ms);
+}
+
+/* Disegnini a mano: il tratto si disegna da solo (use:disegna). */
+.schizzo path,
+.schizzo circle,
+.schizzo ellipse,
+.schizzo line,
+.schizzo polyline {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.schizzo.da-disegnare [data-tratto] { stroke-dasharray: var(--l, 1000); stroke-dashoffset: var(--l, 1000); }
+.schizzo.disegnato [data-tratto] {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--durata, 900ms) cubic-bezier(0.65, 0, 0.35, 1) var(--d, 0ms);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .appare { opacity: 1; transform: none; filter: none; }
+  .schizzo.da-disegnare [data-tratto] { stroke-dashoffset: 0; }
   *,
   *::before,
   *::after {

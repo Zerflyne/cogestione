@@ -8,7 +8,8 @@
   import { supabase } from '../lib/supabase.js';
   import { app, isAdmin } from '../lib/stato.svelte.js';
   import { FASI, formatoData } from '../lib/etichette.js';
-  import { siAccende } from '../lib/azioni.js';
+  import { siAccende, appare } from '../lib/azioni.js';
+  import Schizzo from '../componenti/Schizzo.svelte';
 
   const entra = !giaEntrato;
   giaEntrato = true;
@@ -58,10 +59,10 @@
   });
 
   const passi = [
-    { id: 'proposte', titolo: 'Proposte', testo: 'Chiunque può proporre un corso, un laboratorio o un torneo.' },
-    { id: 'calendario', titolo: 'Calendario', testo: 'I rappresentanti compongono il programma e lo portano al Collegio docenti.' },
-    { id: 'iscrizioni', titolo: 'Iscrizioni', testo: 'Scegli cosa seguire in ogni fascia oraria, dal telefono.' },
-    { id: 'cogestione', titolo: 'Cogestione', testo: 'Cinque giorni interi, costruiti da studenti e docenti.' },
+    { id: 'proposte', icona: 'lampadina', titolo: 'Proposte', testo: 'Chiunque può proporre un corso, un laboratorio o un torneo.' },
+    { id: 'calendario', icona: 'griglia', titolo: 'Calendario', testo: 'I rappresentanti compongono il programma e lo portano al Collegio docenti.' },
+    { id: 'iscrizioni', icona: 'spunta', titolo: 'Iscrizioni', testo: 'Scegli cosa seguire in ogni fascia oraria, dal telefono.' },
+    { id: 'cogestione', icona: 'stella', titolo: 'Cogestione', testo: 'Cinque giorni interi, costruiti da studenti e docenti.' },
   ];
   const ordine = ['chiusa', 'proposte', 'calendario', 'iscrizioni', 'cogestione'];
   const indice = $derived(ordine.indexOf(fase));
@@ -90,7 +91,7 @@
       </p>
       <h1 id="eroe-titolo">
         <span class="riga-h" style="--i: 0"><span>Cinque giorni di corsi</span></span>
-        <span class="riga-h" style="--i: 1"><span>pensati dagli studenti.</span></span>
+        <span class="riga-h" style="--i: 1"><span>pensati dagli <span class="segnato">studenti<Schizzo nome="sottolinea" class="sotto-segno" ritardo={entra ? 900 : 200} durata={700} spessore={2.4} /></span>.</span></span>
       </h1>
       <p class="lead dopo" style="--i: 1">{sotto}</p>
       <div class="pulsanti dopo" style="--i: 2">
@@ -108,6 +109,8 @@
       </div>
     </div>
 
+    <div class="scena">
+    <Schizzo nome="calendario" class="disegno" ritardo={entra ? 500 : 100} />
     <aside class="pannello carta" aria-label="Scadenza">
       <div class="pannello-testa">
         <span class="badge badge-in_revisione">{FASI[fase]}</span>
@@ -118,7 +121,7 @@
           <div><strong>{mancano.giorni}</strong><span>giorni</span></div>
           <div><strong>{due(mancano.ore)}</strong><span>ore</span></div>
           <div><strong>{due(mancano.minuti)}</strong><span>minuti</span></div>
-          <div><strong class="secondi">{due(mancano.secondi)}</strong><span>secondi</span></div>
+          <div>{#key mancano.secondi}<strong class="secondi">{due(mancano.secondi)}</strong>{/key}<span>secondi</span></div>
         </div>
         <p class="pannello-data">{formatoData(traguardo.quando)}</p>
       {:else}
@@ -133,19 +136,16 @@
         {/each}
       </ol>
     </aside>
+    </div>
   </section>
 
   <section class="sezione" aria-labelledby="come-titolo">
-    <h2 id="come-titolo">Come funziona la cogestione</h2>
+    <h2 id="come-titolo" use:appare>Come funziona la cogestione</h2>
     <ol class="passi">
       {#each passi as p, i (p.id)}
-        <li class="passo {statoPasso(p.id)}">
-          <span class="numero-passo">
-            {#if statoPasso(p.id) === 'fatto'}
-              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
-            {:else}{i + 1}{/if}
-          </span>
-          <h3>{p.titolo}{#if statoPasso(p.id) === 'ora'}<span class="ora-qui">adesso</span>{/if}</h3>
+        <li class="passo {statoPasso(p.id)}" use:appare={{ ritardo: i * 90 }}>
+          <span class="icona-passo"><Schizzo nome={p.icona} ritardo={200 + i * 150} /></span>
+          <h3><span class="n">{i + 1}</span>{p.titolo}{#if statoPasso(p.id) === 'ora'}<span class="ora-qui">adesso</span>{/if}</h3>
           <p>{p.testo}</p>
         </li>
       {/each}
@@ -154,26 +154,26 @@
 
   <section class="sezione frase" aria-label="Posti per tutti">
     <p use:siAccende>
-      In ogni fascia oraria ci sono posti per <strong>almeno il 110%</strong> degli studenti, così nessuno resta nei
+      In ogni fascia oraria ci sono posti per almeno il <strong class="cerchiato">110%<Schizzo nome="cerchio" class="cerchio" durata={900} spessore={2.4} /></strong> degli studenti, così nessuno resta nei
       corridoi.
     </p>
   </section>
 
   {#if app.studente}
     <section class="sezione" aria-labelledby="tue-titolo">
-      <h2 id="tue-titolo">Le tue cose</h2>
+      <h2 id="tue-titolo" use:appare>Le tue cose</h2>
       <div class="numeri">
-        <a class="carta carta-viva numero" href="#/proposte">
+        <a class="carta carta-viva numero" href="#/proposte" use:appare>
           <strong>{mie ?? '–'}</strong>
           <span>{mie === 1 ? 'proposta inviata' : 'proposte inviate'}</span>
         </a>
         {#if isAdmin()}
-          <a class="carta carta-viva numero evidenza" href="#/revisione">
+          <a class="carta carta-viva numero evidenza" href="#/revisione" use:appare={{ ritardo: 90 }}>
             <strong>{daValutare ?? '–'}</strong>
             <span>da valutare</span>
           </a>
         {:else}
-          <a class="carta carta-viva numero" href="#/profilo">
+          <a class="carta carta-viva numero" href="#/profilo" use:appare={{ ritardo: 90 }}>
             <strong>{app.studente.classe ?? '–'}</strong>
             <span>la tua classe</span>
           </a>
@@ -225,7 +225,7 @@
     letter-spacing: -0.04em;
     margin: 0 0 var(--s-5);
   }
-  .riga-h { display: block; overflow: hidden; padding-bottom: 0.06em; margin-bottom: -0.06em; }
+  .riga-h { display: block; overflow: hidden; padding-bottom: 0.3em; margin-bottom: -0.3em; }
   .riga-h > span { display: block; }
   .lead {
     max-width: 34em;
@@ -251,8 +251,33 @@
   @keyframes sale-dopo { from { opacity: 0; transform: translateY(12px); } }
   @keyframes si-posa { from { opacity: 0; transform: scale(0.98); } }
 
-  /* ── Pannello della scadenza: dati veri, non un'illustrazione ── */
-  .pannello { display: grid; gap: var(--s-4); padding: var(--s-5); }
+  /* Il segno rosso sotto "studenti". */
+  .segnato { position: relative; white-space: nowrap; }
+  .segnato :global(.sotto-segno) {
+    position: absolute;
+    left: -2%;
+    width: 104%;
+    bottom: -0.2em;
+    height: 0.3em;
+    color: var(--rosso);
+  }
+
+  /* ── Scena: disegno a mano con il pannello di vetro sopra ── */
+  .scena { position: relative; display: grid; }
+  .scena :global(.disegno) { width: 100%; max-width: 440px; height: auto; justify-self: end; opacity: 0.9; }
+  .pannello {
+    position: relative;
+    margin-top: -20%;
+    margin-right: 8%;
+    display: grid;
+    gap: var(--s-4);
+    padding: var(--s-5);
+    box-shadow: var(--ombra-su);
+  }
+  @media (max-width: 899px) {
+    .scena :global(.disegno) { max-width: 360px; justify-self: center; }
+    .pannello { margin: -22% 0 0; }
+  }
   .pannello-testa { display: flex; }
   .pannello-titolo { margin: 0; font: 500 var(--t-h3) / 1.2 var(--serif); letter-spacing: -0.02em; }
   .pannello-data { margin: 0; font-size: var(--t-small); color: var(--testo-2); }
@@ -263,7 +288,7 @@
     gap: 2px;
     padding: var(--s-3) 0;
     border-radius: var(--raggio);
-    background: var(--superficie-2);
+    background: color-mix(in oklab, var(--superficie-2) 70%, transparent);
   }
   .conto strong {
     font: 500 clamp(28px, 2vw + 20px, 38px) / 1 var(--serif);
@@ -271,7 +296,9 @@
     font-variant-numeric: tabular-nums;
   }
   .conto span { font-size: var(--t-label); color: var(--testo-3); }
-  .secondi { color: var(--accento); }
+  .secondi { color: var(--rosso); }
+  .secondi { display: inline-block; animation: scatta 320ms var(--ease-entra); }
+  @keyframes scatta { from { opacity: 0; transform: translateY(-40%); filter: blur(2px); } }
 
   .mini-percorso {
     display: grid;
@@ -285,8 +312,8 @@
     color: var(--testo-3);
   }
   .mini-percorso li { display: grid; gap: var(--s-2); }
-  .mini-percorso span { height: 4px; border-radius: 2px; background: var(--superficie-2); }
-  .mini-percorso .fatto span { background: color-mix(in oklab, var(--accento) 45%, var(--superficie-2)); }
+  .mini-percorso span { height: 4px; border-radius: 2px; background: var(--linea); }
+  .mini-percorso .fatto span { background: var(--testo-3); }
   .mini-percorso .ora span { background: var(--accento); }
   .mini-percorso .ora { color: var(--testo); font-weight: 500; }
 
@@ -313,28 +340,18 @@
   }
   .passo { display: grid; gap: var(--s-2); align-content: start; }
   @media (max-width: 719px) {
-    .passo { grid-template-columns: 40px 1fr; column-gap: var(--s-4); }
-    .passo .numero-passo { grid-row: span 2; }
+    .passo { grid-template-columns: 56px 1fr; column-gap: var(--s-4); }
+    .passo .icona-passo { grid-row: span 2; }
+  }
+  .icona-passo { width: 52px; height: 52px; color: var(--testo); }
+  .icona-passo :global(svg) { width: 100%; height: 100%; }
+  @media (min-width: 720px) {
+    .icona-passo { width: 64px; height: 64px; margin-bottom: var(--s-3); }
   }
   .passo h3 { display: flex; align-items: center; gap: var(--s-2); margin: 0; font-size: 20px; }
+  .n { font: 500 var(--t-label) / 1 var(--mono); color: var(--testo-3); }
   .passo p { margin: 0; color: var(--testo-2); }
   .poi h3 { color: var(--testo-2); }
-  .numero-passo {
-    width: 40px;
-    height: 40px;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    border: 1px solid var(--linea-forte);
-    font: 500 15px var(--sans);
-    color: var(--testo-2);
-  }
-  @media (min-width: 720px) {
-    .numero-passo { margin-bottom: var(--s-2); }
-  }
-  .numero-passo path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-  .ora .numero-passo { background: var(--accento); border-color: var(--accento); color: var(--accento-su); }
-  .fatto .numero-passo { background: var(--accento-tinta); border-color: transparent; color: var(--accento); }
   .ora-qui {
     font: 500 var(--t-label) / 1 var(--sans);
     color: var(--accento);
@@ -357,7 +374,17 @@
     transition: color 160ms ease;
   }
   .frase :global(.si-accende .parola.accesa) { color: var(--testo); }
-  .frase :global(.si-accende strong .parola.accesa) { color: var(--accento); }
+  .frase :global(.si-accende strong .parola.accesa) { color: var(--rosso); }
+  .cerchiato { position: relative; white-space: nowrap; color: var(--rosso); margin: 0 0.12em; }
+  .cerchiato :global(.cerchio) {
+    position: absolute;
+    left: -18%;
+    top: -22%;
+    width: 136%;
+    height: 144%;
+    color: var(--rosso);
+    pointer-events: none;
+  }
   @media (min-width: 640px) {
     .frase { padding: var(--s-9) 0 calc(var(--s-9) * 1.5); }
     .frase p { font-size: clamp(40px, 3vw + 20px, 56px); }
@@ -370,8 +397,7 @@
   .numero { display: grid; gap: var(--s-1); color: var(--testo); }
   .numero strong { font: 500 clamp(32px, 1.6vw + 26px, 44px) / 1.05 var(--serif); letter-spacing: -0.03em; }
   .numero span { color: var(--testo-2); font-size: 15px; }
-  .evidenza { background: var(--accento-tinta); border-color: transparent; }
-  .evidenza strong { color: var(--accento); }
+  .evidenza strong { color: var(--rosso); }
 
   .piede {
     display: flex;

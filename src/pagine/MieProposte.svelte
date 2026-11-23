@@ -4,6 +4,7 @@
   import { STATI, AULE, messaggioErrore } from '../lib/etichette.js';
   import { flip } from 'svelte/animate';
   import { fade } from 'svelte/transition';
+  import { appare } from '../lib/azioni.js';
   import Scheletro from '../componenti/Scheletro.svelte';
 
   let corsi = $state([]);
@@ -58,7 +59,7 @@
   {:else}
     <ul class="elenco">
       {#each corsi as c, i (c.id)}
-        <li class="carta pila" animate:flip={{ duration: 300 }} out:fade={{ duration: 180 }}>
+        <li class="carta pila" use:appare={{ ritardo: i * 80 }} animate:flip={{ duration: 300 }} out:fade={{ duration: 180 }}>
           <div class="riga">
             <span class="badge badge-{c.stato}">{STATI[c.stato]}</span>
             <span class="attenuato piccolo spinge">{AULE[c.aula_richiesta]}</span>

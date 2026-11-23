@@ -84,8 +84,10 @@
     inset: 0 0 auto;
     z-index: 10;
     height: var(--nav-h);
-    background: var(--bg);
-    border-bottom: 1px solid var(--linea);
+    background: color-mix(in oklab, var(--bg) 72%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    backdrop-filter: blur(18px) saturate(1.4);
+    border-bottom: 1px solid var(--vetro-bordo);
   }
   .wrap {
     height: 100%;
@@ -154,21 +156,27 @@
     .solo-stretto { display: none; }
   }
 
-  /* Telefono: barra delle schede in basso, a tutta larghezza, opaca, filo sopra. */
+  /* Telefono: dock di vetro che galleggia in basso. */
   .tab {
     position: fixed;
-    inset: auto 0 0;
+    left: var(--s-3);
+    right: var(--s-3);
+    bottom: calc(var(--s-3) + env(safe-area-inset-bottom));
     z-index: 10;
-    height: var(--barra-h);
-    padding-bottom: env(safe-area-inset-bottom);
-    background: var(--bg);
-    border-top: 1px solid var(--linea);
+    border-radius: 22px;
+    background: color-mix(in oklab, var(--superficie) 66%, transparent);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    backdrop-filter: blur(20px) saturate(1.5);
+    border: 1px solid var(--vetro-bordo);
+    box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.35);
+    animation: dock-entra 600ms var(--ease-entra) both 200ms;
   }
+  @keyframes dock-entra { from { opacity: 0; transform: translateY(24px); } }
   .tab ul {
     height: 64px;
     display: flex;
     margin: 0;
-    padding: 0 var(--s-2);
+    padding: 0 var(--s-1);
     list-style: none;
   }
   .tab li { flex: 1; }
@@ -178,26 +186,38 @@
     display: grid;
     place-content: center;
     justify-items: center;
-    gap: 4px;
+    gap: 3px;
+    padding-bottom: 6px;
     color: var(--testo-3);
     font: 500 13px/1 var(--sans);
     transition: color var(--m-out) var(--ease);
   }
+  /* Pillola che segna la pagina corrente, con un punto porpora. */
   .tab a::before {
     content: '';
     position: absolute;
-    top: -1px;
-    left: 28%;
-    right: 28%;
-    height: 2px;
-    border-radius: 0 0 2px 2px;
-    background: var(--accento);
-    transform: scaleX(0);
-    transition: transform 240ms var(--ease);
+    inset: 7px 4px;
+    border-radius: 16px;
+    background: color-mix(in oklab, var(--testo) 7%, transparent);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 240ms var(--ease), transform 300ms var(--ease-entra);
   }
+  .tab a::after {
+    content: '';
+    position: absolute;
+    bottom: 9px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accento);
+    opacity: 0;
+    transition: opacity 240ms var(--ease);
+  }
+  .tab a[aria-current='page']::after { opacity: 1; }
   .tab a[aria-current='page'] { color: var(--testo); }
-  .tab a[aria-current='page']::before { transform: scaleX(1); }
-  .tab a[aria-current='page'] svg { color: var(--accento); }
+  .tab a[aria-current='page']::before { opacity: 1; transform: none; }
+  .tab a > * { position: relative; }
   .tab a:active svg { transform: scale(0.92); }
   .tab svg { transition: transform var(--m-press) var(--ease); }
   .tab path {

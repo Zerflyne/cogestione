@@ -151,6 +151,10 @@ body {
   /* Carta a puntini, come un quaderno da schizzi. */
   background-image: radial-gradient(var(--puntini) 1px, transparent 1.2px);
   background-size: 22px 22px;
+<<<<<<< HEAD
+=======
+  background-attachment: fixed;
+>>>>>>> origin/claude/project-thread-cy163z
   color: var(--testo);
   font: 400 var(--t-body) / 1.6 var(--sans);
   -webkit-font-smoothing: antialiased;
@@ -214,9 +218,15 @@ nav a { background-image: none; }
 .intestazione-pagina p { margin: 0; color: var(--testo-2); font-size: var(--t-lead); line-height: 1.5; }
 
 .carta {
+<<<<<<< HEAD
   /* Semitrasparente ma senza sfocatura: la sfocatura su tante carte rallenta i telefoni.
      Il vetro sfocato vero resta sulle barre e sul pannello della home. */
   background: color-mix(in oklab, var(--superficie) 88%, transparent);
+=======
+  background: var(--vetro);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+>>>>>>> origin/claude/project-thread-cy163z
   border: 1px solid var(--vetro-bordo);
   border-radius: var(--raggio-l);
   padding: var(--s-5);

@@ -273,6 +273,9 @@
     gap: var(--s-4);
     padding: var(--s-5);
     box-shadow: var(--ombra-su);
+    background: var(--vetro);
+    -webkit-backdrop-filter: blur(14px) saturate(1.3);
+    backdrop-filter: blur(14px) saturate(1.3);
   }
   @media (max-width: 899px) {
     .scena :global(.disegno) { max-width: 360px; justify-self: center; }

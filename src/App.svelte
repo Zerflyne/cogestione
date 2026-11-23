@@ -45,6 +45,11 @@
     <div class="giro" role="status" aria-label="Caricamento"></div>
   </main>
 {:else}
+  {#if app.irraggiungibile}
+    <div class="avviso avviso-attenzione fuori-linea" role="alert">
+      Il sito non riesce a raggiungere il database. Riprova tra qualche minuto; se continua, avvisa i rappresentanti.
+    </div>
+  {/if}
   <main>
     {#key pagina + (app.rotta.param ?? '')}
     <div class="vista" in:fade={{ duration: riduci ? 0 : 180 }}>
@@ -73,6 +78,15 @@
 
 <style>
   .vista { position: relative; isolation: isolate; }
+  .fuori-linea {
+    position: fixed;
+    top: calc(var(--nav-h) + 8px);
+    left: 12px;
+    right: 12px;
+    z-index: 11;
+    max-width: 720px;
+    margin: 0 auto;
+  }
   .caricamento {
     display: grid;
     place-items: center;

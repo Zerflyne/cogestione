@@ -3,6 +3,8 @@ import { supabase, configurato } from './supabase.js';
 // Stato condiviso dell'app: sessione, scheda dello studente, impostazioni e pagina corrente.
 export const app = $state({
   pronto: false,
+  // Vero se il database non risponde: il sito lo dice invece di restare in attesa.
+  irraggiungibile: false,
   sessione: null,
   studente: null,
   impostazioni: null,
@@ -51,7 +53,8 @@ export async function caricaStudente() {
 }
 
 export async function caricaImpostazioni() {
-  const { data } = await supabase.from('impostazioni').select('*').eq('id', 1).single();
+  const { data, error } = await supabase.from('impostazioni').select('*').eq('id', 1).single();
+  if (error) app.irraggiungibile = true;
   app.impostazioni = data;
 }
 
@@ -60,11 +63,15 @@ export async function avvia() {
     app.pronto = true;
     return;
   }
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  app.sessione = session;
-  await Promise.all([caricaStudente(), caricaImpostazioni()]);
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    app.sessione = session;
+    await Promise.all([caricaStudente(), caricaImpostazioni()]);
+  } catch {
+    app.irraggiungibile = true;
+  }
   app.pronto = true;
 
   supabase.auth.onAuthStateChange((_evento, s) => {

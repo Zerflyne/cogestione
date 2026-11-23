@@ -1,0 +1,27 @@
+name: Tieni sveglio Supabase
+
+# Il piano gratuito di Supabase mette in pausa il progetto dopo una settimana senza richieste:
+# a quel punto il sito non riesce più a fare l'accesso né a caricare i dati.
+# Questa azione fa una piccola lettura ogni 3 giorni per tenerlo attivo.
+
+on:
+  schedule:
+    - cron: '17 6 */3 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sveglia:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Una lettura dalla tabella impostazioni
+        run: |
+          set -a; . ./.env; set +a   # URL e chiave pubblica, già presenti nel sito
+          codice=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 \
+            "$VITE_SUPABASE_URL/rest/v1/impostazioni?select=id&limit=1" \
+            -H "apikey: $VITE_SUPABASE_ANON_KEY" -H "Authorization: Bearer $VITE_SUPABASE_ANON_KEY")
+          echo "Risposta di Supabase: $codice"
+          test "$codice" = "200"

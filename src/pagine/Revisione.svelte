@@ -71,9 +71,9 @@
 </script>
 
 <div class="pagina pila-l">
-  <header>
+  <header class="intestazione-pagina">
     <h1>Revisione proposte</h1>
-    <p class="attenuato piccolo">
+    <p>
       {corsi.length} proposte · {postiApprovati} posti-fascia approvati
     </p>
   </header>
@@ -98,7 +98,7 @@
         <li class="carta carta-viva pila" animate:flip={{ duration: 350, easing: cubicOut }} in:fade={{ duration: 220 }}>
           <button class="intestazione" onclick={() => apri(c)} aria-expanded={aperto === c.id}>
             <div class="riga">
-              <span class="badge badge-{c.stato}" class:pulsa={c.stato === 'in_revisione'}>{STATI[c.stato]}</span>
+              <span class="badge badge-{c.stato}">{STATI[c.stato]}</span>
               <span class="attenuato piccolo spinge">{AULE[c.aula_richiesta]}</span>
             </div>
             <h2>{c.titolo}</h2>
@@ -171,7 +171,7 @@
     cursor: pointer;
   }
   .intestazione:focus-visible { outline: 2px solid var(--accento); outline-offset: 4px; }
-  h2 { font-size: 1.15rem; margin: 2px 0 0; }
+  h2 { font-size: 20px; margin: 2px 0 0; }
   .dettaglio { border-top: 1px solid var(--linea); padding-top: 14px; }
   .dettaglio p { margin: 0; white-space: pre-line; }
   .azioni { display: flex; flex-wrap: wrap; gap: 8px; }

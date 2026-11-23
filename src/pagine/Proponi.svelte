@@ -91,9 +91,9 @@
 </script>
 
 <div class="pagina pila-l">
-  <header>
+  <header class="intestazione-pagina">
     <h1>{originale ? 'Modifica proposta' : 'Proponi un corso'}</h1>
-    <p class="attenuato">
+    <p>
       I rappresentanti leggono ogni proposta e ti rispondono qui. Puoi modificarla finché non viene approvata.
     </p>
   </header>

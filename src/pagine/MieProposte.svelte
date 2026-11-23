@@ -39,9 +39,9 @@
 </script>
 
 <div class="pagina pila-l">
-  <header class="riga">
-    <h1 style="margin:0">Le mie proposte</h1>
-    {#if aperte}<a class="btn btn-primario btn-s spinge" href="#/proponi">Nuova</a>{/if}
+  <header class="intestazione-pagina">
+    <h1>Le mie proposte</h1>
+    <p>Qui vedi a che punto è ogni proposta e cosa ti chiedono i rappresentanti.</p>
   </header>
 
   {#if appenaInviata}
@@ -59,9 +59,9 @@
   {:else}
     <ul class="elenco">
       {#each corsi as c, i (c.id)}
-        <li class="carta carta-viva pila" use:appare={{ ritardo: i * 70 }} animate:flip={{ duration: 300 }} out:fade={{ duration: 180 }}>
+        <li class="carta pila" use:appare={{ ritardo: i * 80 }} animate:flip={{ duration: 300 }} out:fade={{ duration: 180 }}>
           <div class="riga">
-            <span class="badge badge-{c.stato}" class:pulsa={c.stato === 'in_revisione'}>{STATI[c.stato]}</span>
+            <span class="badge badge-{c.stato}">{STATI[c.stato]}</span>
             <span class="attenuato piccolo spinge">{AULE[c.aula_richiesta]}</span>
           </div>
           <h2>{c.titolo}</h2>
@@ -92,7 +92,7 @@
 
 <style>
   .elenco { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-  h2 { font-size: 1.15rem; margin: 2px 0 0; }
+  h2 { font-size: 20px; margin: 2px 0 0; }
   .descr {
     margin: 0;
     display: -webkit-box;

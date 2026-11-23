@@ -149,8 +149,8 @@
 </script>
 
 <div class="pagina pila-l non-stampa">
-  <header>
-    <a href="#/impostazioni" class="piccolo">← Impostazioni</a>
+  <header class="intestazione-pagina">
+    <a href="#/impostazioni" class="piccolo indietro">← Impostazioni</a>
     <h1>Studenti</h1>
     {#if !caricamento}
       <p class="attenuato piccolo">
@@ -304,13 +304,13 @@
   .due { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: end; }
   .spunta { display: flex; gap: 8px; align-items: center; min-height: 44px; }
   .spunta input { width: 18px; height: 18px; accent-color: var(--accento); }
-  input[type='file'] { font: inherit; font-size: 0.9rem; color: var(--testo-2); }
+  input[type='file'] { font: inherit; font-size: var(--t-small); color: var(--testo-2); }
 
   .anteprima { border-top: 1px solid var(--linea); padding-top: 14px; }
   .numeri-import { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .numeri-import div { display: grid; justify-items: center; padding: 10px 0; border-radius: 12px; background: var(--superficie-2); }
-  .numeri-import strong { font: 600 1.5rem/1.1 var(--serif); }
-  .numeri-import span { font-size: 0.75rem; color: var(--testo-3); }
+  .numeri-import strong { font: 500 24px/1.1 var(--serif); }
+  .numeri-import span { font-size: var(--t-label); color: var(--testo-3); }
   .numeri-import .scarti strong { color: var(--attenzione); }
   .scartate { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; }
   summary { cursor: pointer; color: var(--testo-2); }
@@ -328,7 +328,7 @@
   .elenco li > div:first-child { display: grid; min-width: 0; }
   .elenco li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .stato { display: flex; gap: 8px; align-items: center; flex: none; }
-  code { font: 500 0.85rem ui-monospace, 'SF Mono', Menlo, monospace; letter-spacing: 0.04em; }
+  code { font: 500 14px var(--mono); letter-spacing: 0.04em; }
   code.manca { color: var(--testo-3); font-family: var(--sans); letter-spacing: 0; }
 
   .solo-stampa { display: none; }

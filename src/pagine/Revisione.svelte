@@ -1,4 +1,6 @@
 <script>
+  import Schizzo from '../componenti/Schizzo.svelte';
+  import Intestazione from '../componenti/Intestazione.svelte';
   import { supabase } from '../lib/supabase.js';
   import { STATI, AULE, messaggioErrore, formatoData } from '../lib/etichette.js';
   import { flip } from 'svelte/animate';
@@ -71,12 +73,9 @@
 </script>
 
 <div class="pagina pila-l">
-  <header class="intestazione-pagina">
-    <h1>Revisione proposte</h1>
-    <p>
-      {corsi.length} proposte · {postiApprovati} posti-fascia approvati
-    </p>
-  </header>
+  <Intestazione titolo="Revisione proposte" disegno="lente">
+    <p>{corsi.length} proposte · {postiApprovati} posti-fascia approvati</p>
+  </Intestazione>
 
   <div class="schede" role="group" aria-label="Filtra">
     {#each filtri as x (x.id)}
@@ -91,7 +90,7 @@
   {#if caricamento}
     <Scheletro righe={3} />
   {:else if visibili.length === 0}
-    <div class="vuoto carta">Niente qui.</div>
+    <div class="vuoto carta"><span class="vuoto-disegno"><Schizzo nome="spunta" /></span><p>Niente qui: tutto in ordine.</p></div>
   {:else}
     <ul class="elenco">
       {#each visibili as c (c.id)}
@@ -163,6 +162,8 @@
 </div>
 
 <style>
+  .vuoto-disegno { width: 64px; height: 64px; color: var(--testo); }
+  .vuoto-disegno :global(svg) { width: 100%; height: 100%; }
   .elenco { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
   .intestazione {
     all: unset;

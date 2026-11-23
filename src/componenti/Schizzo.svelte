@@ -85,6 +85,64 @@
     <path data-tratto stroke-width="2" d="M24 5 L 29 18 L 43 19 L 32 28 L 36 42 L 24 34 L 12 42 L 16 28 L 5 19 L 19 18 Z" />
     <path data-tratto stroke-width="2" class="rosso" d="M41 4 L 44 9 M46 12 L 41 13" />
   </svg>
+{:else if nome === 'chiave'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 110, durata: 700 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M30 22 C 16 22, 10 36, 16 46 C 22 56, 40 56, 44 44 C 48 32, 42 22, 30 22" />
+    <path data-tratto stroke-width="2.2" d="M27 34 C 24 36, 26 41, 30 40" />
+    <path data-tratto stroke-width="2.2" d="M43 47 C 56 60, 66 70, 82 84" />
+    <path data-tratto stroke-width="2.2" d="M66 70 L 72 63 M74 77 L 80 70" />
+    <path data-tratto stroke-width="2.4" class="rosso" d="M58 18 L 62 10 M68 26 L 78 22 M54 30 L 60 34" />
+  </svg>
+{:else if nome === 'busta'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 110, durata: 700 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M12 30 C 34 29, 60 30, 84 28 C 85 46, 84 62, 85 76 C 60 77, 36 76, 12 77 C 11 62, 12 46, 12 30" />
+    <path data-tratto stroke-width="2.2" d="M13 31 C 28 44, 40 54, 48 56 C 58 54, 70 44, 83 30" />
+    <path data-tratto stroke-width="2.4" class="rosso" d="M70 8 C 64 12, 66 20, 72 18 C 78 16, 78 8, 72 8" />
+    <path data-tratto stroke-width="2" class="rosso" d="M60 22 C 64 18, 66 16, 68 14" />
+  </svg>
+{:else if nome === 'lista'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 90, durata: 600 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M20 10 C 40 9, 60 10, 76 9 C 77 36, 76 62, 77 86 C 58 87, 38 86, 19 87 C 18 62, 19 36, 20 10" />
+    <path data-tratto stroke-width="2" d="M30 28 L 34 32 L 40 24" />
+    <path data-tratto stroke-width="2" d="M46 28 C 54 27, 60 28, 66 27" />
+    <path data-tratto stroke-width="2" d="M30 48 L 34 52 L 40 44" />
+    <path data-tratto stroke-width="2" d="M46 48 C 54 47, 60 48, 66 47" />
+    <path data-tratto stroke-width="2" d="M30 68 C 32 66, 38 66, 40 68" />
+    <path data-tratto stroke-width="2" d="M46 68 C 52 67, 56 68, 60 67" />
+    <path data-tratto stroke-width="2.6" class="rosso" d="M26 62 C 20 66, 24 76, 34 74 C 44 72, 44 62, 36 60 C 32 59, 28 60, 26 62" />
+  </svg>
+{:else if nome === 'lente'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 110, durata: 700 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M40 14 C 22 14, 12 28, 14 42 C 16 58, 32 66, 46 62 C 62 58, 68 42, 62 28 C 58 18, 48 14, 36 16" />
+    <path data-tratto stroke-width="2.6" d="M58 58 C 66 66, 74 74, 84 84" />
+    <path data-tratto stroke-width="2.6" class="rosso" d="M28 40 L 36 48 L 50 30" />
+  </svg>
+{:else if nome === 'faccina'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 110, durata: 700 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M48 10 C 26 10, 12 26, 12 46 C 12 68, 28 84, 50 84 C 72 84, 86 66, 84 44 C 82 24, 66 10, 44 12" />
+    <path data-tratto stroke-width="2.6" d="M36 38 L 36 42 M60 38 L 60 42" />
+    <path data-tratto stroke-width="2.4" class="rosso" d="M32 56 C 40 66, 56 66, 64 56" />
+    <path data-tratto stroke-width="2" d="M30 20 C 36 14, 46 12, 54 14" />
+  </svg>
+{:else if nome === 'ingranaggio'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 110, durata: 800 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M44 12 L 52 12 L 54 22 C 58 23, 62 25, 65 27 L 73 21 L 79 27 L 73 35 C 75 38, 77 42, 78 46 L 88 48 L 88 56 L 78 58 C 77 62, 75 66, 73 69 L 79 77 L 73 83 L 65 77 C 62 79, 58 81, 54 82 L 52 92 L 44 92 L 42 82 C 38 81, 34 79, 31 77 L 23 83 L 17 77 L 23 69 C 21 66, 19 62, 18 58 L 8 56 L 8 48 L 18 46 C 19 42, 21 38, 23 35 L 17 27 L 23 21 L 31 27 C 34 25, 38 23, 42 22 Z" />
+    <path data-tratto stroke-width="2.4" class="rosso" d="M48 38 C 40 38, 36 44, 38 52 C 40 60, 52 62, 57 55 C 62 48, 58 38, 48 38" />
+  </svg>
+{:else if nome === 'lucchetto'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 110, durata: 700 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M22 44 C 40 43, 58 44, 74 43 C 75 58, 74 72, 75 86 C 58 87, 40 86, 21 87 C 20 72, 21 58, 22 44" />
+    <path data-tratto stroke-width="2.2" d="M32 44 C 31 30, 36 16, 48 16 C 60 16, 65 28, 64 44" />
+    <path data-tratto stroke-width="2.6" class="rosso" d="M48 58 L 48 70" />
+  </svg>
+{:else if nome === 'persone'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 100, durata: 700 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M34 18 C 26 18, 22 26, 26 32 C 30 38, 40 36, 41 28 C 42 22, 38 18, 32 19" />
+    <path data-tratto stroke-width="2.2" d="M14 64 C 14 50, 22 42, 34 42 C 46 42, 52 50, 52 60" />
+    <path data-tratto stroke-width="2.2" d="M64 30 C 56 30, 52 38, 56 44 C 60 50, 70 48, 71 40 C 72 34, 68 30, 62 31" />
+    <path data-tratto stroke-width="2.2" d="M46 76 C 46 62, 54 54, 64 54 C 76 54, 82 62, 82 74" />
+    <path data-tratto stroke-width="2.4" class="rosso" d="M12 84 C 34 80, 60 82, 86 80" />
+  </svg>
 {/if}
 
 <style>

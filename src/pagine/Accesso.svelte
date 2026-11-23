@@ -1,7 +1,7 @@
 <script>
+  import Intestazione from '../componenti/Intestazione.svelte';
   import { supabase, inApp } from '../lib/supabase.js';
   import { app } from '../lib/stato.svelte.js';
-  import Schizzo from '../componenti/Schizzo.svelte';
 
   let codice = $state('');
   let inCorso = $state(false);
@@ -55,10 +55,9 @@
 </script>
 
 <div class="pagina pila-l">
-  <header class="intestazione-pagina">
-    <h1 class="con-segno">Accedi<Schizzo nome="scintille" class="scintille" ritardo={300} /></h1>
-    <p class="attenuato">Serve per proporre un corso e, più avanti, per iscriverti.</p>
-  </header>
+  <Intestazione titolo="Accedi" disegno="chiave">
+    <p>Serve per proporre un corso e, più avanti, per iscriverti.</p>
+  </Intestazione>
 
   {#if errore}
     <div class="avviso avviso-errore" role="alert">{errore}</div>
@@ -112,8 +111,6 @@
 </div>
 
 <style>
-  .con-segno { position: relative; justify-self: start; }
-  .con-segno :global(.scintille) { position: absolute; right: -40px; top: -14px; width: 34px; height: 34px; color: var(--rosso); }
   .separatore {
     display: flex;
     align-items: center;

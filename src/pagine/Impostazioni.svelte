@@ -46,10 +46,10 @@
 </script>
 
 <div class="pagina pila-l">
-  <header>
-    <a href="#/profilo" class="piccolo">← Profilo</a>
+  <header class="intestazione-pagina">
+    <a href="#/profilo" class="piccolo indietro">← Profilo</a>
     <h1>Impostazioni</h1>
-    <p class="attenuato">Solo per i rappresentanti d'istituto. Ogni modifica resta nel registro.</p>
+    <p>Solo per i rappresentanti d'istituto. Ogni modifica resta nel registro.</p>
   </header>
 
   {#if errore}<div class="avviso avviso-errore" role="alert">{errore}</div>{/if}

@@ -1,7 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { fly } from 'svelte/transition';
-  import { cubicOut } from 'svelte/easing';
+  import { fade } from 'svelte/transition';
   import { configurato } from './lib/supabase.js';
   import { app, avvia, isAdmin, profiloCompleto } from './lib/stato.svelte.js';
   import Navigazione from './componenti/Navigazione.svelte';
@@ -43,12 +42,12 @@
   </main>
 {:else if !app.pronto}
   <main class="pagina caricamento" aria-busy="true">
-    <div class="puntino"></div>
+    <div class="giro" role="status" aria-label="Caricamento"></div>
   </main>
 {:else}
   <main>
     {#key pagina + (app.rotta.param ?? '')}
-    <div class="vista" in:fly={{ y: 14, duration: riduci ? 0 : 420, easing: cubicOut }}>
+    <div class="vista" in:fade={{ duration: riduci ? 0 : 180 }}>
     {#if pagina === 'accesso'}
       <Accesso />
     {:else if pagina === 'profilo'}
@@ -79,15 +78,13 @@
     place-items: center;
     min-height: 70vh;
   }
-  .puntino {
-    width: 12px;
-    height: 12px;
+  .giro {
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
-    background: var(--accento);
-    animation: pulsa 1s ease-in-out infinite alternate;
+    border: 2px solid var(--linea-forte);
+    border-top-color: var(--accento);
+    animation: giro 1s linear infinite;
   }
-  @keyframes pulsa {
-    from { opacity: 0.25; transform: scale(0.8); }
-    to { opacity: 1; transform: scale(1.1); }
-  }
+  @keyframes giro { to { transform: rotate(360deg); } }
 </style>

@@ -53,9 +53,8 @@
   }
 </script>
 
-<div class="pagina pila-l" style="position: relative">
-  <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
-  <header style="padding-top: 28px">
+<div class="pagina pila-l">
+  <header class="intestazione-pagina">
     <h1>Accedi</h1>
     <p class="attenuato">Serve per proporre un corso e, più avanti, per iscriverti.</p>
   </header>
@@ -66,7 +65,7 @@
 
   {#if !inApp}
     <section class="carta pila">
-      <h2>Account della scuola</h2>
+      <h2>Con l'account della scuola</h2>
       <p class="attenuato piccolo">Usa l'indirizzo che finisce con <strong>@{dominio}</strong>.</p>
       <button class="btn btn-primario btn-pieno" onclick={conGoogle} disabled={inCorso}>
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
@@ -80,7 +79,7 @@
   {/if}
 
   <form class="carta pila" onsubmit={conCodice}>
-    <h2>Codice personale</h2>
+    <h2>Con il codice personale</h2>
     <p class="attenuato piccolo">
       Ti è arrivato per email e su un foglietto in classe. Non serve nessuna password.
     </p>
@@ -117,7 +116,7 @@
     align-items: center;
     gap: 12px;
     color: var(--testo-3);
-    font-size: 0.8rem;
+    font-size: var(--t-label);
   }
   .separatore::before,
   .separatore::after {
@@ -127,7 +126,7 @@
     background: var(--linea);
   }
   .codice {
-    font: 600 1.35rem/1 ui-monospace, 'SF Mono', Menlo, monospace !important;
+    font: 500 24px/1 var(--mono) !important;
     letter-spacing: 0.18em;
     text-align: center;
   }

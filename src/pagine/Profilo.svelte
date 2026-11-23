@@ -41,12 +41,12 @@
 </script>
 
 <div class="pagina pila-l">
-  <header>
+  <header class="intestazione-pagina">
     <h1>{completo ? 'Profilo' : 'Un ultimo passo'}</h1>
     {#if !completo}
-      <p class="attenuato">Completa i tuoi dati: servono ai rappresentanti per organizzare corsi e presenze.</p>
+      <p>Completa i tuoi dati: servono ai rappresentanti per organizzare corsi e presenze.</p>
     {:else}
-      <p class="attenuato">{app.studente?.email}</p>
+      <p>{app.studente?.email}</p>
     {/if}
   </header>
 

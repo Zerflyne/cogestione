@@ -1,4 +1,6 @@
 <script>
+  import Collegamento from '../componenti/Collegamento.svelte';
+  import Intestazione from '../componenti/Intestazione.svelte';
   import { supabase } from '../lib/supabase.js';
   import { app, caricaStudente, esci, profiloCompleto, impostaTema, temaAttuale, isAdmin } from '../lib/stato.svelte.js';
   import { messaggioErrore } from '../lib/etichette.js';
@@ -41,14 +43,13 @@
 </script>
 
 <div class="pagina pila-l">
-  <header class="intestazione-pagina">
-    <h1>{completo ? 'Profilo' : 'Un ultimo passo'}</h1>
+  <Intestazione titolo={completo ? 'Profilo' : 'Un ultimo passo'} disegno="faccina">
     {#if !completo}
       <p>Completa i tuoi dati: servono ai rappresentanti per organizzare corsi e presenze.</p>
     {:else}
       <p>{app.studente?.email}</p>
     {/if}
-  </header>
+  </Intestazione>
 
   <form class="carta pila" onsubmit={salva}>
     <div class="due">
@@ -91,8 +92,11 @@
     </section>
 
     {#if isAdmin()}
-      <a class="btn btn-secondario btn-pieno" href="#/impostazioni">Impostazioni della cogestione</a>
-      <a class="btn btn-tenue btn-pieno" href="#/studenti">Studenti e codici</a>
+      <section class="pila">
+        <p class="etichetta-sezione" style="margin:0">Area rappresentanti</p>
+        <Collegamento href="#/impostazioni" titolo="Impostazioni della cogestione" testo="Fase, date delle proposte, blocco del calendario." disegno="ingranaggio" />
+        <Collegamento href="#/studenti" titolo="Studenti e codici" testo="Elenco della scuola, codici personali, foglietti da stampare." disegno="persone" />
+      </section>
     {/if}
   {/if}
 

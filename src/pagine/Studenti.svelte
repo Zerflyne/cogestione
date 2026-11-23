@@ -1,4 +1,5 @@
 <script>
+  import Intestazione from '../componenti/Intestazione.svelte';
   import { supabase } from '../lib/supabase.js';
   import { app } from '../lib/stato.svelte.js';
   import { messaggioErrore } from '../lib/etichette.js';
@@ -149,15 +150,13 @@
 </script>
 
 <div class="pagina pila-l non-stampa">
-  <header class="intestazione-pagina">
-    <a href="#/impostazioni" class="piccolo indietro">← Impostazioni</a>
-    <h1>Studenti</h1>
+  <Intestazione titolo="Studenti e codici" disegno="persone" indietro={{ href: '#/impostazioni', testo: 'Impostazioni' }}>
     {#if !caricamento}
-      <p class="attenuato piccolo">
+      <p class="piccolo">
         {studenti.length} studenti · {classi.length} classi · {entrati} hanno già fatto l'accesso · {senzaCodice} senza codice
       </p>
     {/if}
-  </header>
+  </Intestazione>
 
   {#if errore}<div class="avviso avviso-errore" role="alert">{errore}</div>{/if}
   {#if messaggio}<div class="avviso avviso-ok">{messaggio}</div>{/if}

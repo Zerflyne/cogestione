@@ -1,4 +1,6 @@
 <script>
+  import Schizzo from '../componenti/Schizzo.svelte';
+  import Intestazione from '../componenti/Intestazione.svelte';
   import { supabase } from '../lib/supabase.js';
   import { app } from '../lib/stato.svelte.js';
   import { STATI, AULE, messaggioErrore } from '../lib/etichette.js';
@@ -39,10 +41,9 @@
 </script>
 
 <div class="pagina pila-l">
-  <header class="intestazione-pagina">
-    <h1>Le mie proposte</h1>
+  <Intestazione titolo="Le mie proposte" disegno="busta">
     <p>Qui vedi a che punto è ogni proposta e cosa ti chiedono i rappresentanti.</p>
-  </header>
+  </Intestazione>
 
   {#if appenaInviata}
     <div class="avviso avviso-ok">Proposta inviata. Ti rispondiamo qui appena la valutiamo.</div>
@@ -53,6 +54,7 @@
     <Scheletro righe={2} />
   {:else if corsi.length === 0}
     <div class="vuoto carta">
+      <span class="vuoto-disegno"><Schizzo nome="lampadina" /></span>
       <p>Non hai ancora proposto nessun corso.</p>
       {#if aperte}<a class="btn btn-primario" href="#/proponi">Proponi un corso</a>{/if}
     </div>
@@ -91,6 +93,8 @@
 </div>
 
 <style>
+  .vuoto-disegno { width: 72px; height: 72px; color: var(--testo); }
+  .vuoto-disegno :global(svg) { width: 100%; height: 100%; }
   .elenco { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
   h2 { font-size: 20px; margin: 2px 0 0; }
   .descr {

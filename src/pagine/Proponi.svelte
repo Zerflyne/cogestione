@@ -1,4 +1,5 @@
 <script>
+  import Intestazione from '../componenti/Intestazione.svelte';
   import { supabase } from '../lib/supabase.js';
   import { app, vai } from '../lib/stato.svelte.js';
   import { AULE, messaggioErrore, formatoData } from '../lib/etichette.js';
@@ -91,12 +92,9 @@
 </script>
 
 <div class="pagina pila-l">
-  <header class="intestazione-pagina">
-    <h1>{originale ? 'Modifica proposta' : 'Proponi un corso'}</h1>
-    <p>
-      I rappresentanti leggono ogni proposta e ti rispondono qui. Puoi modificarla finché non viene approvata.
-    </p>
-  </header>
+  <Intestazione titolo={originale ? 'Modifica proposta' : 'Proponi un corso'} disegno="lampadina">
+    <p>I rappresentanti leggono ogni proposta e ti rispondono qui. Puoi modificarla finché non viene approvata.</p>
+  </Intestazione>
 
   {#if caricamento}
     <Scheletro righe={2} />

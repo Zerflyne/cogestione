@@ -45,7 +45,8 @@ browser non può aggirarle.
 2. **SQL Editor** → esegui in ordine i file di `supabase/migrations/` (sul progetto attuale è già fatto).
 3. **Authentication → Providers → Google**: attivalo con Client ID e Secret (vedi punto 2).
 4. **Authentication → URL Configuration**: in *Site URL* e *Redirect URLs* metti l'indirizzo del sito
-   (es. `https://zerflyne.github.io/cogestione/`) e `http://localhost:5173/` per le prove.
+   (`https://studentitorricelli.org/`, più `https://www.studentitorricelli.org/` e
+   `https://zerflyne.github.io/cogestione/` per sicurezza) e `http://localhost:5173/` per le prove.
 5. Funzione per l'accesso con codice (sul progetto attuale è già pubblicata), dal computer:
    ```sh
    npx supabase login
@@ -78,6 +79,24 @@ browser non può aggirarle.
    la sicurezza la fanno le regole del database.
 2. *Settings → Pages → Source*: **GitHub Actions**.
 3. Ogni push su `main` pubblica il sito.
+4. Dominio: il sito risponde su **https://studentitorricelli.org** (il file `public/CNAME` lo ricorda).
+   Dal registrar, nei DNS del dominio:
+
+   | Tipo  | Nome  | Valore |
+   |-------|-------|--------|
+   | A     | `@`   | `185.199.108.153` |
+   | A     | `@`   | `185.199.109.153` |
+   | A     | `@`   | `185.199.110.153` |
+   | A     | `@`   | `185.199.111.153` |
+   | AAAA  | `@`   | `2606:50c0:8000::153` |
+   | AAAA  | `@`   | `2606:50c0:8001::153` |
+   | AAAA  | `@`   | `2606:50c0:8002::153` |
+   | AAAA  | `@`   | `2606:50c0:8003::153` |
+   | CNAME | `www` | `zerflyne.github.io` |
+
+   Poi *Settings → Pages → Custom domain*: `studentitorricelli.org`, e quando il certificato è pronto
+   *Enforce HTTPS*. Il vecchio indirizzo `zerflyne.github.io/cogestione/` reindirizza da solo al dominio.
+   Il build usa percorsi relativi (`base: './'`), quindi non serve cambiare niente nel codice.
 
 > GitHub Pages su un repository **privato** richiede GitHub Pro, gratuito per gli studenti con il
 > [GitHub Student Developer Pack](https://education.github.com/pack). In alternativa si rende pubblico il

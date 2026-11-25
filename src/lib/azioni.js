@@ -108,3 +108,43 @@ export function disegna(nodo, { ritardo = 0, passo = 140, durata = 900 } = {}) {
   const stop = quandoVisibile(nodo, () => requestAnimationFrame(() => nodo.classList.add('disegnato')), '0px');
   return { destroy: stop };
 }
+
+// Numero che conta da 0 fino al valore quando entra nello schermo.
+// Uso: <strong use:conta={500}>500</strong>
+export function conta(nodo, valore) {
+  if (ridotto()) return {};
+  nodo.textContent = '0';
+  let richiesta = 0;
+  const stop = quandoVisibile(nodo, () => {
+    const inizio = performance.now();
+    const durata = 1300;
+    const passo = (t) => {
+      const k = Math.min(1, (t - inizio) / durata);
+      nodo.textContent = String(Math.round(valore * (1 - Math.pow(1 - k, 3))));
+      if (k < 1) richiesta = requestAnimationFrame(passo);
+    };
+    richiesta = requestAnimationFrame(passo);
+  });
+  return { destroy() { stop(); cancelAnimationFrame(richiesta); } };
+}
+
+// La scena segue appena il puntatore: ogni pezzo si sposta secondo la sua --profondita.
+// Solo con mouse e senza movimento ridotto.
+export function segue(nodo) {
+  if (ridotto() || !matchMedia('(hover: hover) and (pointer: fine)').matches) return {};
+  let richiesta = 0;
+  let x = 0;
+  let y = 0;
+  const muovi = (e) => {
+    x = e.clientX / innerWidth - 0.5;
+    y = e.clientY / innerHeight - 0.5;
+    if (!richiesta)
+      richiesta = requestAnimationFrame(() => {
+        richiesta = 0;
+        nodo.style.setProperty('--mx', x.toFixed(3));
+        nodo.style.setProperty('--my', y.toFixed(3));
+      });
+  };
+  addEventListener('pointermove', muovi, { passive: true });
+  return { destroy() { removeEventListener('pointermove', muovi); cancelAnimationFrame(richiesta); } };
+}

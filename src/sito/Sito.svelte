@@ -2,9 +2,9 @@
   // Il sito dei rappresentanti degli studenti: una pagina sola, con la cogestione come sezione a parte.
   import { onMount } from 'svelte';
   import Schizzo from '../componenti/Schizzo.svelte';
-  import { appare, siAccende } from '../lib/azioni.js';
+  import { appare, siAccende, conta, segue } from '../lib/azioni.js';
   import { FASI, formatoData } from '../lib/etichette.js';
-  import { rappresentanti, contatti, attivita } from './contenuti.js';
+  import { contatti, attivita, numeri, formule } from './contenuti.js';
 
   // La fase della cogestione, letta da Supabase senza caricare tutta l'app.
   // Se il database non risponde, la carta mostra solo il collegamento.
@@ -30,13 +30,20 @@
     return null;
   });
 
-  const iniziali = (nome) =>
-    nome
-      .split(/\s+/)
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((p) => p[0].toUpperCase())
-      .join('');
+  // Pezzi della scena dell'eroe: dove stanno, quanto sono grandi e quanto seguono il puntatore.
+  const pezzi = [
+    { nome: 'atomo', x: 0, y: 0, w: 44, p: 18, ritardo: 400, gira: true },
+    { nome: 'grafico', x: 58, y: 0, w: 36, p: 10, ritardo: 700 },
+    { nome: 'molecola', x: 44, y: 32, w: 20, p: 30, ritardo: 1300 },
+    { nome: 'beuta', x: 4, y: 48, w: 30, p: 26, ritardo: 900 },
+    { nome: 'compasso', x: 70, y: 44, w: 24, p: 14, ritardo: 1100 },
+  ];
+  const scritte = [
+    { testo: 'H₂O', x: 46, y: 4, p: 34, rosso: true },
+    { testo: '∫ f(x) dx', x: 38, y: 64, p: 12 },
+    { testo: 'E = mc²', x: 40, y: 80, p: 22, rosso: true },
+    { testo: 'a² + b² = c²', x: 58, y: 86, p: 20 },
+  ];
 
   const voci = [
     { href: '#cosa', testo: 'Cosa facciamo' },
@@ -90,7 +97,16 @@
     </div>
 
     <div class="scena">
-      <Schizzo nome="scuola" class="disegno" ritardo={500} />
+      <div class="laboratorio" use:segue aria-hidden="true">
+        {#each pezzi as pz, i (pz.nome)}
+          <div class="pezzo" class:gira={pz.gira} style="--x: {pz.x}%; --y: {pz.y}%; --w: {pz.w}%; --p: {pz.p}px; --i: {i}">
+            <div class="fluttua"><Schizzo nome={pz.nome} ritardo={pz.ritardo} /></div>
+          </div>
+        {/each}
+        {#each scritte as sc, i (sc.testo)}
+          <span class="scritta" class:rosso={sc.rosso} style="--x: {sc.x}%; --y: {sc.y}%; --p: {sc.p}px; --i: {i + 2}">{sc.testo}</span>
+        {/each}
+      </div>
       <a class="pannello carta" href="./cogestione/" aria-label="Apri la sezione cogestione">
         <span class="pannello-testa">
           <span class="etichetta">In evidenza</span>
@@ -107,6 +123,16 @@
       </a>
     </div>
   </section>
+
+  <div class="nastro" aria-hidden="true">
+    <div class="nastro-scorre">
+      {#each [0, 1] as copia (copia)}
+        <ul>
+          {#each formule as f (f)}<li>{f}</li>{/each}
+        </ul>
+      {/each}
+    </div>
+  </div>
 
   <section class="sezione" id="cosa" aria-labelledby="cosa-titolo">
     <h2 id="cosa-titolo" use:appare>Cosa facciamo</h2>
@@ -134,17 +160,20 @@
 
   <section class="sezione" id="chi" aria-labelledby="chi-titolo">
     <div class="testa-sezione">
-      <h2 id="chi-titolo" use:appare>Chi siamo</h2>
-      <p class="attenuato" use:appare>Eletti dagli studenti, restiamo in carica un anno. Fermaci quando vuoi.</p>
+      <div class="titolo-con-disegno">
+        <h2 id="chi-titolo" use:appare>Chi siamo</h2>
+        <span class="disegno-titolo"><Schizzo nome="molecola" ritardo={200} /></span>
+      </div>
+      <p class="attenuato" use:appare>
+        I rappresentanti d'istituto: sediamo nel Consiglio d'istituto e nel Comitato studentesco, e restiamo in carica un
+        anno. Fermaci quando vuoi, in corridoio o tramite il rappresentante della tua classe.
+      </p>
     </div>
-    <ul class="persone">
-      {#each rappresentanti as r, i (r.nome + i)}
-        <li class="carta persona" use:appare={{ ritardo: i * 80 }}>
-          <span class="avatar" aria-hidden="true">{iniziali(r.nome)}</span>
-          <span class="chi">
-            <strong>{r.nome}</strong>
-            <span>{r.classe ? `Classe ${r.classe}` : "Rappresentante d'istituto"}</span>
-          </span>
+    <ul class="numeri">
+      {#each numeri as n, i (n.testo)}
+        <li class="carta numero" use:appare={{ ritardo: i * 90 }}>
+          <strong use:conta={n.valore}>{n.valore}</strong>
+          <span>{n.testo}</span>
         </li>
       {/each}
     </ul>
@@ -291,7 +320,7 @@
   @keyframes sale-dopo { from { opacity: 0; transform: translateY(12px); } }
   @keyframes si-posa { from { opacity: 0; transform: scale(0.98); } }
   @media (prefers-reduced-motion: reduce) {
-    .riga-h > span, .dopo, .pannello { animation: none; }
+    .riga-h > span, .dopo, .pannello, .fluttua, .scritta, .nastro-scorre, .disegno-titolo, .voce:hover .icona { animation: none; }
   }
 
   .segnato { position: relative; white-space: nowrap; }
@@ -305,10 +334,48 @@
   }
 
   .scena { position: relative; display: grid; }
-  .scena :global(.disegno) { width: 100%; max-width: 440px; height: auto; justify-self: end; opacity: 0.9; }
+  .laboratorio {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    aspect-ratio: 1 / 0.82;
+    justify-self: end;
+    --mx: 0;
+    --my: 0;
+  }
+  .pezzo {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--w);
+    aspect-ratio: 1;
+    color: var(--testo);
+    transform: translate(calc(var(--mx) * var(--p) * -1), calc(var(--my) * var(--p) * -1));
+    transition: transform 600ms var(--ease-entra);
+  }
+  .fluttua { width: 100%; height: 100%; animation: fluttua 6s ease-in-out infinite alternate; animation-delay: calc(var(--i) * -1.3s); }
+  .fluttua :global(svg) { width: 100%; height: 100%; }
+  .gira .fluttua { animation: gira 40s linear infinite; }
+  .scritta {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    font: 500 clamp(14px, 0.6vw + 12px, 18px) / 1 var(--mono);
+    color: var(--testo-3);
+    white-space: nowrap;
+    transform: translate(calc(var(--mx) * var(--p) * -1), calc(var(--my) * var(--p) * -1)) rotate(-4deg);
+    transition: transform 600ms var(--ease-entra);
+    animation: compare 700ms var(--ease-entra) both;
+    animation-delay: calc(1200ms + var(--i) * 180ms);
+  }
+  .scritta.rosso { color: var(--rosso); }
+  @keyframes fluttua { from { translate: 0 -6px; rotate: -2deg; } to { translate: 0 8px; rotate: 2deg; } }
+  @keyframes gira { to { rotate: 360deg; } }
+  @keyframes oscilla { 0%, 100% { rotate: -8deg; } 50% { rotate: 8deg; } }
+  @keyframes compare { from { opacity: 0; translate: 0 10px; } }
   .pannello {
     position: relative;
-    margin-top: -16%;
+    margin-top: -2%;
     margin-right: 8%;
     display: grid;
     gap: var(--s-2);
@@ -325,8 +392,8 @@
     .pannello:hover .pannello-vai svg { transform: translateX(3px); }
   }
   @media (max-width: 899px) {
-    .scena :global(.disegno) { max-width: 360px; justify-self: center; }
-    .pannello { margin: -14% 0 0; }
+    .laboratorio { max-width: 380px; justify-self: center; }
+    .pannello { margin: 0; }
   }
   .pannello-testa { display: flex; align-items: center; justify-content: space-between; gap: var(--s-2); margin-bottom: var(--s-1); }
   .etichetta { font-size: var(--t-label); font-weight: 500; color: var(--testo-3); }
@@ -386,6 +453,18 @@
   .voce p { margin: 0; color: var(--testo-2); }
   .vai { display: inline-flex; align-items: center; gap: var(--s-2); margin-top: var(--s-2); font-weight: 500; font-size: 15px; color: var(--accento); }
   .voce:hover .vai svg { transform: translateX(3px); }
+  @media (hover: hover) and (pointer: fine) {
+    .voce:hover .icona { animation: scuoti 600ms var(--ease-entra); }
+  }
+  @keyframes scuoti { 25% { rotate: -10deg; scale: 1.08; } 60% { rotate: 6deg; } }
+
+  /* Carta a quadretti, come un quaderno di matematica. Solo su questa pagina. */
+  :global(body) {
+    background-image:
+      linear-gradient(color-mix(in oklab, var(--puntini) 60%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in oklab, var(--puntini) 60%, transparent) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
 
   /* La frase che si accende scorrendo. */
   .frase p { margin: 0; max-width: 22em; font: 500 var(--t-h2) / 1.16 var(--serif); letter-spacing: -0.03em; text-wrap: pretty; }
@@ -410,28 +489,47 @@
   }
 
   /* ── Chi siamo ── */
-  .persone { display: grid; gap: var(--s-3); margin: 0; padding: 0; list-style: none; }
-  @media (min-width: 640px) {
-    .persone { grid-template-columns: repeat(2, 1fr); gap: var(--s-4); }
+  .titolo-con-disegno { display: flex; align-items: center; gap: var(--s-3); }
+  .disegno-titolo { width: 56px; height: 56px; animation: oscilla 7s ease-in-out infinite; }
+  .disegno-titolo :global(svg) { width: 100%; height: 100%; }
+  .numeri { display: grid; gap: var(--s-3); margin: 0; padding: 0; list-style: none; }
+  @media (min-width: 720px) {
+    .numeri { grid-template-columns: repeat(3, 1fr); gap: var(--s-4); }
   }
-  @media (min-width: 1000px) {
-    .persone { grid-template-columns: repeat(4, 1fr); }
+  .numero { display: grid; gap: var(--s-2); align-content: start; }
+  .numero strong {
+    font: 500 clamp(48px, 3vw + 36px, 72px) / 1 var(--serif);
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
   }
-  .persona { display: grid; grid-template-columns: 52px minmax(0, 1fr); align-items: center; gap: var(--s-4); }
-  .avatar {
-    display: grid;
-    place-items: center;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: var(--accento-tinta);
-    color: var(--accento);
-    font: 500 18px/1 var(--serif);
-    letter-spacing: 0.02em;
+  .numero:first-child strong { color: var(--rosso); }
+  .numero span { color: var(--testo-2); }
+
+  /* ── Nastro di formule ── */
+  .nastro {
+    overflow: hidden;
+    margin: 0 calc(var(--s-4) * -1);
+    padding: var(--s-4) 0;
+    border-top: 1px solid var(--linea);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
   }
-  .chi { display: grid; gap: 2px; }
-  .chi strong { font: 500 18px/1.25 var(--serif); letter-spacing: -0.01em; }
-  .chi span { font-size: var(--t-small); color: var(--testo-2); }
+  .nastro-scorre { display: flex; width: max-content; animation: scorri 48s linear infinite; }
+  .nastro:hover .nastro-scorre { animation-play-state: paused; }
+  .nastro ul { display: flex; margin: 0; padding: 0; list-style: none; }
+  .nastro li {
+    display: flex;
+    align-items: center;
+    gap: var(--s-6);
+    padding-right: var(--s-6);
+    font: 400 clamp(18px, 1vw + 14px, 24px) / 1 var(--mono);
+    color: var(--testo-2);
+    white-space: nowrap;
+  }
+  .nastro li::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--rosso); }
+  .nastro li:nth-child(3n) { color: var(--testo); }
+  @keyframes scorri { to { transform: translateX(-50%); } }
+  .nastro + .sezione { border-top-color: var(--linea); }
 
   /* ── Contatti ── */
   .contatti { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--s-5); align-items: start; }

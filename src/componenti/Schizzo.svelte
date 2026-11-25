@@ -3,6 +3,10 @@
   // Il colore è currentColor: si decide da fuori (inchiostro, rosso o porpora).
   import { disegna } from '../lib/azioni.js';
 
+  // Le parti che si muovono da sole (elettroni, bollicine) restano ferme con il movimento ridotto.
+  const muovi = typeof matchMedia !== 'undefined' && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const orbita = 'M8 48 C 8 29.3, 88 29.3, 88 48 C 88 66.7, 8 66.7, 8 48';
+
   let { nome, ritardo = 0, passo = 140, durata = 900, spessore = 2, class: classe = '', ...resto } = $props();
 </script>
 
@@ -177,6 +181,65 @@
       <path data-tratto d="M298 52 L 306 36 M314 64 L 330 58 M294 72 L 282 64" />
     </g>
   </svg>
+{:else if nome === 'atomo'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 140, durata: 800 }} {...resto}>
+    {#each [0, 60, -60] as giro, i (giro)}
+      <g transform="rotate({giro} 48 48)">
+        <path data-tratto stroke-width="2" d={orbita} />
+        <circle class="pieno elettrone" r="3.2" cx={muovi ? 0 : i === 0 ? 8 : 88} cy={muovi ? 0 : 48}>
+          {#if muovi}<animateMotion dur="{2.6 + i * 0.7}s" repeatCount="indefinite" path={orbita} begin="{-i * 0.9}s" />{/if}
+        </circle>
+      </g>
+    {/each}
+    <path data-tratto stroke-width="2.6" class="rosso" d="M48 42 C 43 42, 42 47, 43 50 C 45 55, 53 54, 54 49 C 55 44, 51 41, 46 43" />
+  </svg>
+{:else if nome === 'beuta'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 120, durata: 700 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M40 14 C 40 22, 41 30, 40 38 C 33 52, 25 66, 18 80 C 16 85, 18 87, 23 87 C 40 86, 57 87, 74 86 C 79 86, 80 84, 78 80 C 71 66, 63 52, 56 38 C 55 30, 56 22, 56 14" />
+    <path data-tratto stroke-width="2.2" d="M35 14 C 44 13, 52 14, 61 13" />
+    <path data-tratto stroke-width="2.4" class="rosso" d="M28 64 C 38 61, 48 67, 58 63 C 62 62, 66 63, 69 64" />
+    <path data-tratto stroke-width="1.6" d="M44 26 L 50 26 M44 32 L 48 32" />
+    {#each [[42, 2.6, 0], [52, 2, 0.8], [47, 3, 1.6], [58, 1.8, 2.3]] as [x, r, attesa] (x)}
+      <circle class="bolla rosso" cx={x} cy="80" r={r} stroke-width="1.6" opacity={muovi ? 0 : 1}>
+        {#if muovi}
+          <animate attributeName="cy" values="82;24" dur="3.2s" begin="{attesa}s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.7;1" dur="3.2s" begin="{attesa}s" repeatCount="indefinite" />
+        {/if}
+      </circle>
+    {/each}
+  </svg>
+{:else if nome === 'compasso'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 120, durata: 700 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M48 9 C 43 9, 42 15, 45 18 C 48 21, 54 18, 53 13 C 52 10, 50 9, 47 10" />
+    <path data-tratto stroke-width="2.2" d="M48 9 L 48 3" />
+    <path data-tratto stroke-width="2.2" d="M45 19 C 39 40, 33 60, 27 80" />
+    <path data-tratto stroke-width="2.2" d="M51 19 C 56 36, 60 50, 64 68 L 69 66 L 70 80 L 63 70" />
+    <path data-tratto stroke-width="2.4" class="rosso" d="M18 86 C 32 93, 56 93, 76 82" />
+  </svg>
+{:else if nome === 'molecola'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 100, durata: 600 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M48 26 L 68 38 L 68 62 L 48 74 L 28 62 L 28 38 Z" />
+    <path data-tratto stroke-width="2" d="M50 32 L 64 40 M64 58 L 50 66 M33 58 L 33 42" />
+    <path data-tratto stroke-width="2.2" d="M48 26 L 48 12 M68 62 L 82 70" />
+    <path data-tratto stroke-width="2.4" class="rosso" d="M48 5 C 44 5, 43 10, 45 12 C 48 14, 53 12, 52 8 C 52 6, 50 5, 47 6" />
+    <path data-tratto stroke-width="2.4" class="rosso" d="M86 70 C 82 69, 80 74, 83 76 C 86 78, 90 76, 89 72 C 89 70, 87 69, 85 70" />
+  </svg>
+{:else if nome === 'provetta'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 120, durata: 700 }} {...resto}>
+    <g transform="rotate(18 48 48)">
+      <path data-tratto stroke-width="2.2" d="M40 12 C 40 32, 41 52, 40 74 C 40 87, 56 87, 56 74 C 55 52, 56 32, 56 12" />
+      <path data-tratto stroke-width="2.2" d="M35 12 C 44 11, 52 12, 61 11" />
+      <path data-tratto stroke-width="2.4" class="rosso" d="M41 52 C 45 50, 51 54, 55 52" />
+    </g>
+    <path data-tratto stroke-width="2" class="rosso" d="M70 14 L 74 6 M78 22 L 86 18 M66 24 L 62 18" />
+  </svg>
+{:else if nome === 'grafico'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 120, durata: 800 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M12 84 C 36 83, 62 84, 88 83 M82 78 L 88 83 L 82 88" />
+    <path data-tratto stroke-width="2.2" d="M14 86 C 13 62, 14 36, 13 10 M8 16 L 13 10 L 18 16" />
+    <path data-tratto stroke-width="2.6" class="rosso" d="M16 50 C 24 22, 34 22, 42 50 S 60 78, 68 50 S 80 26, 86 34" />
+    <path data-tratto stroke-width="1.4" d="M29 30 L 29 84 M55 70 L 55 84" />
+  </svg>
 {/if}
 
 <style>
@@ -185,5 +248,6 @@
   .schizzo :global(.rosso) { color: var(--rosso); }
   .schizzo :global(.rosso) :global(path),
   .schizzo :global(path.rosso) { stroke: var(--rosso); }
+  .schizzo :global(.pieno) { fill: var(--rosso); stroke: none; }
   .matita-testo { font: 500 15px var(--serif); fill: var(--testo-3); }
 </style>

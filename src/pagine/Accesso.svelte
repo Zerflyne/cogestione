@@ -106,7 +106,7 @@
 
   <p class="attenuato piccolo centrato">
     Non hai il codice o non riesci a entrare? Scrivi ai rappresentanti d'istituto.<br />
-    Entrando accetti l'<a href="./privacy.html">informativa sulla privacy</a>.
+    Entrando accetti l'<a href="../privacy.html">informativa sulla privacy</a>.
   </p>
 </div>
 

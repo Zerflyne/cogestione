@@ -143,6 +143,40 @@
     <path data-tratto stroke-width="2.2" d="M46 76 C 46 62, 54 54, 64 54 C 76 54, 82 62, 82 74" />
     <path data-tratto stroke-width="2.4" class="rosso" d="M12 84 C 34 80, 60 82, 86 80" />
   </svg>
+{:else if nome === 'megafono'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 110, durata: 700 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M16 40 C 16 46, 16 52, 17 58 L 30 58 C 44 64, 54 70, 66 77 C 67 58, 66 40, 67 21 C 54 28, 44 34, 30 40 L 16 40" />
+    <path data-tratto stroke-width="2.2" d="M32 59 C 34 66, 36 72, 38 76 L 46 75 C 44 70, 42 66, 41 62" />
+    <path data-tratto stroke-width="2.4" class="rosso" d="M75 38 C 80 44, 80 54, 75 60 M83 30 C 92 41, 92 57, 83 68" />
+  </svg>
+{:else if nome === 'scuola'}
+  <!-- Illustrazione del sito: la scuola, con la bandiera e un fumetto rosso. -->
+  <svg class="schizzo {classe}" viewBox="0 0 340 280" aria-hidden="true" use:disegna={{ ritardo, passo: 80, durata: 700 }} {...resto}>
+    <g class="inchiostro" stroke-width="2.2">
+      <path data-tratto d="M60 122 C 130 119, 210 121, 280 118 C 282 160, 280 200, 282 238 C 210 240, 130 238, 58 240 C 57 200, 59 160, 60 122" />
+      <path data-tratto d="M46 124 C 100 98, 140 80, 170 63 C 200 80, 240 98, 294 120" />
+      <path data-tratto d="M14 242 C 120 238, 220 240, 326 236" />
+      <path data-tratto d="M150 239 C 150 214, 152 197, 170 195 C 188 197, 190 214, 190 239" />
+      <path data-tratto d="M170 88 C 162 88, 159 96, 162 102 C 165 108, 177 108, 179 101 C 181 94, 177 88, 168 89 M170 93 L 170 99 L 175 101" />
+      <path data-tratto d="M170 63 L 170 22" />
+    </g>
+    <g class="inchiostro" stroke-width="1.7">
+      <path data-tratto d="M80 142 L 108 141 L 108 166 L 80 167 Z" />
+      <path data-tratto d="M120 142 L 140 141 L 140 166 L 120 167 Z" />
+      <path data-tratto d="M200 141 L 220 141 L 220 166 L 200 166 Z" />
+      <path data-tratto d="M232 141 L 260 140 L 260 165 L 232 166 Z" />
+      <path data-tratto d="M80 186 L 108 185 L 108 210 L 80 211 Z" />
+      <path data-tratto d="M232 185 L 260 184 L 260 209 L 232 210 Z" />
+      <path data-tratto d="M83 162 L 98 144 M92 165 L 106 147" />
+      <path data-tratto d="M235 206 L 250 188 M244 209 L 258 191" />
+    </g>
+    <g class="rosso" stroke-width="2.6">
+      <path data-tratto d="M171 24 C 182 19, 192 30, 205 25 L 205 42 C 192 47, 182 36, 171 41" />
+      <path data-tratto data-durata="1000" d="M34 44 C 32 28, 70 22, 90 30 C 108 38, 104 58, 82 60 L 70 74 L 70 61 C 48 61, 36 56, 34 44" />
+      <path data-tratto d="M54 42 L 56 44 M66 42 L 68 44 M78 42 L 80 44" />
+      <path data-tratto d="M298 52 L 306 36 M314 64 L 330 58 M294 72 L 282 64" />
+    </g>
+  </svg>
 {/if}
 
 <style>

@@ -5,7 +5,7 @@
 
 <script>
   import { onMount } from 'svelte';
-  import { supabase } from '../lib/supabase.js';
+  import { supabase, inApp } from '../lib/supabase.js';
   import { app, isAdmin } from '../lib/stato.svelte.js';
   import { FASI, formatoData } from '../lib/etichette.js';
   import { siAccende, appare } from '../lib/azioni.js';
@@ -184,7 +184,10 @@
 
   <footer class="piede">
     <span>Rappresentanti degli studenti · IIS Evangelista Torricelli</span>
-    <a href="./privacy.html">Privacy</a>
+    <span class="piede-link">
+      {#if !inApp}<a href="../">Sito dei rappresentanti</a>{/if}
+      <a href="../privacy.html">Privacy</a>
+    </span>
   </footer>
 </div>
 
@@ -402,6 +405,7 @@
   .numero span { color: var(--testo-2); font-size: 15px; }
   .evidenza strong { color: var(--rosso); }
 
+  .piede-link { display: flex; gap: var(--s-5); }
   .piede {
     display: flex;
     flex-wrap: wrap;

@@ -24,8 +24,11 @@ Costo: 0 €. Le specifiche complete sono nel documento "Piattaforma cogestione 
 ## Struttura
 
 ```
-src/                 sito (Svelte 5 + Vite)
-  pagine/            una pagina per schermata
+index.html           sito dei rappresentanti (studentitorricelli.org/)
+cogestione/index.html  sezione cogestione (studentitorricelli.org/cogestione/), anche nell'app Tauri
+src/
+  sito/              sito dei rappresentanti; testi, nomi e contatti in sito/contenuti.js
+  pagine/            una pagina per schermata della cogestione
   lib/               collegamento a Supabase, stato, etichette
 supabase/
   migrations/        schema del database, permessi e regole
@@ -45,8 +48,8 @@ browser non può aggirarle.
 2. **SQL Editor** → esegui in ordine i file di `supabase/migrations/` (sul progetto attuale è già fatto).
 3. **Authentication → Providers → Google**: attivalo con Client ID e Secret (vedi punto 2).
 4. **Authentication → URL Configuration**: in *Site URL* e *Redirect URLs* metti l'indirizzo del sito
-   (`https://studentitorricelli.org/`, più `https://www.studentitorricelli.org/` e
-   `https://zerflyne.github.io/cogestione/` per sicurezza) e `http://localhost:5173/` per le prove.
+   (`https://studentitorricelli.org/`); in *Redirect URLs* aggiungi `https://studentitorricelli.org/**`
+   (l'accesso con Google torna su `/cogestione/`) e `http://localhost:5173/**` per le prove.
 5. Funzione per l'accesso con codice (sul progetto attuale è già pubblicata), dal computer:
    ```sh
    npx supabase login

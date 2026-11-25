@@ -3,10 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#faf8f9" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#131012" media="(prefers-color-scheme: dark)" />
-    <meta name="description" content="Proposte, programma e iscrizioni della cogestione dell'IIS Evangelista Torricelli." />
-    <title>Cogestione · Torricelli</title>
+    <meta name="theme-color" content="#f6f6f3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f0f0e" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="Il sito dei rappresentanti degli studenti dell'IIS Evangelista Torricelli: chi siamo, cosa facciamo, cogestione e contatti." />
+    <title>Studenti Torricelli · Rappresentanti d'istituto</title>
+    <script>
+      // I vecchi indirizzi della cogestione (/#/proponi, ...) e i ritorni dall'accesso con Google
+      // (?code=...) che arrivano qui vanno alla sezione cogestione, con tutto quello che portano.
+      if (/^#\//.test(location.hash) || /[?&](code|error|error_description)=/.test(location.search)) {
+        location.replace('./cogestione/' + location.search + location.hash);
+      }
+      // Applica il tema salvato prima del disegno, per evitare il lampo bianco.
+      try {
+        const t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,16 +26,9 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..600&family=Figtree:wght@400..600&family=DM+Mono:wght@400;500&display=swap"
     />
-    <script>
-      // Applica il tema salvato prima del disegno, per evitare il lampo bianco.
-      try {
-        const t = localStorage.getItem('tema');
-        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
-      } catch {}
-    </script>
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
+    <div id="sito"></div>
+    <script type="module" src="/src/sito/main.js"></script>
   </body>
 </html>

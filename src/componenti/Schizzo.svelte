@@ -240,6 +240,31 @@
     <path data-tratto stroke-width="2.6" class="rosso" d="M16 50 C 24 22, 34 22, 42 50 S 60 78, 68 50 S 80 26, 86 34" />
     <path data-tratto stroke-width="1.4" d="M29 30 L 29 84 M55 70 L 55 84" />
   </svg>
+{:else if nome === 'computer'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 110, durata: 700 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M18 20 C 38 19, 60 20, 78 19 C 79 36, 78 50, 79 64 C 60 65, 38 64, 17 65 C 16 50, 17 36, 18 20" />
+    <path data-tratto stroke-width="2.2" d="M8 76 C 34 74, 62 75, 88 74 L 82 66 L 14 67 Z" />
+    <path data-tratto stroke-width="2.4" class="rosso" d="M32 34 L 24 42 L 32 50 M64 34 L 72 42 L 64 50 M52 30 L 44 54" />
+  </svg>
+{:else if nome === 'pallone'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 110, durata: 700 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M48 14 C 28 14, 14 30, 15 49 C 16 68, 31 82, 50 81 C 69 80, 83 65, 82 46 C 81 28, 66 14, 46 15" />
+    <path data-tratto stroke-width="2" d="M16 44 C 34 40, 60 40, 81 44 M24 70 C 38 60, 58 60, 74 70 M48 15 C 38 34, 38 62, 49 81" />
+    <path data-tratto stroke-width="2.4" class="rosso" d="M10 88 C 24 86, 32 88, 44 87 M86 22 L 90 14 M80 12 L 82 6" />
+  </svg>
+{:else if nome === 'clessidra'}
+  <svg class="schizzo {classe}" viewBox="0 0 96 96" aria-hidden="true" use:disegna={{ ritardo, passo: 110, durata: 700 }} {...resto}>
+    <path data-tratto stroke-width="2.2" d="M26 10 C 42 9, 56 10, 70 9 M26 86 C 42 87, 56 86, 70 87" />
+    <path data-tratto stroke-width="2.2" d="M30 11 C 30 30, 40 40, 46 48 C 40 56, 30 66, 30 85 M66 11 C 66 30, 56 40, 50 48 C 56 56, 66 66, 66 85" />
+    <path data-tratto stroke-width="2.4" class="rosso" d="M38 26 C 44 28, 52 28, 58 26 L 48 44 Z" />
+    <path data-tratto stroke-width="2.4" class="rosso" d="M36 82 C 40 72, 56 72, 60 82" />
+    {#if muovi}
+      <circle class="pieno granello" cx="48" cy="50" r="1.6">
+        <animate attributeName="cy" values="48;76" dur="1.1s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="1;1;0" keyTimes="0;0.85;1" dur="1.1s" repeatCount="indefinite" />
+      </circle>
+    {/if}
+  </svg>
 {/if}
 
 <style>

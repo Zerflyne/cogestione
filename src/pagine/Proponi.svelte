@@ -11,6 +11,7 @@
   import { slide, fade } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
   import { tick, untrack } from 'svelte';
+  import { carica, togli, urlCopertina } from '../lib/copertine.js';
 
   let { id = null } = $props();
 
@@ -25,10 +26,12 @@
     preferenza_oraria: '',
     co_conduttori: '',
     materiale: '',
+    immagine_path: '',
   };
 
   const PASSI = [
     { titolo: "L'idea", sotto: 'Come si chiama e di cosa parla.', disegno: 'lampadina' },
+    { titolo: 'Immagine', sotto: 'Una foto o un disegno che faccia venire voglia di iscriversi.', disegno: 'stella' },
     { titolo: 'Durata e posti', sotto: 'Quanto tempo serve e quante persone possono venire.', disegno: 'clessidra' },
     { titolo: 'Dove', sotto: "Scegli l'aula che ti serve.", disegno: 'compasso' },
     { titolo: 'Chi e cosa serve', sotto: 'Docenti, compagni che conducono con te, materiale.', disegno: 'persone' },
@@ -152,11 +155,12 @@
       if (d.length < 20) e.descrizione = `Racconta ancora un po': mancano ${20 - d.length} caratteri.`;
       else if (d.length > 500) e.descrizione = 'La descrizione supera i 500 caratteri.';
     }
-    if (n === 1) {
+    if (n === 1 && caricando) e.immagine = 'Aspetta che finisca il caricamento.';
+    if (n === 2) {
       if (!(f.fasce_necessarie >= 1 && f.fasce_necessarie <= 6)) e.fasce = 'Le fasce orarie vanno da 1 a 6.';
       if (!(f.posti_max >= 5 && f.posti_max <= 300)) e.posti = 'I posti vanno da 5 a 300.';
     }
-    if (n === 2) {
+    if (n === 3) {
       if (!AULE[f.aula_richiesta]) e.aula = "Scegli un'aula.";
       if (palestra && f.attivita_palestra.trim().length < 20)
         e.palestra = "Descrivi l'attività in palestra in almeno 20 caratteri.";
@@ -236,6 +240,7 @@
       preferenza_oraria: semplice ? vuotoANull(f.preferenza_oraria) : null,
       co_conduttori: vuotoANull(f.co_conduttori),
       materiale: vuotoANull(f.materiale),
+      immagine_path: vuotoANull(f.immagine_path),
     };
     const { error } = originale
       ? await supabase.from('corsi').update(dati).eq('id', originale.id)
@@ -245,6 +250,8 @@
       return (errore = messaggioErrore(error));
     }
     dimenticaBozza();
+    // L'immagine vecchia, se è stata cambiata, non serve più.
+    if (originale?.immagine_path && originale.immagine_path !== dati.immagine_path) togli(originale.immagine_path);
     vai('proposte/inviata');
   }
 
@@ -254,12 +261,35 @@
     else invia();
   }
 
+  // ── Copertina ──────────────────────────
+  let caricando = $state(false);
+  async function scegliImmagine(e) {
+    const file = e.currentTarget.files?.[0];
+    e.currentTarget.value = '';
+    if (!file) return;
+    delete errori.immagine;
+    caricando = true;
+    try {
+      const prima = f.immagine_path;
+      f.immagine_path = await carica(file, app.studente.id);
+      // Una copertina caricata in questa sessione e poi sostituita si butta subito.
+      if (prima && prima !== originale?.immagine_path) togli(prima);
+    } catch (err) {
+      errori.immagine = err.message;
+    }
+    caricando = false;
+  }
+  function togliImmagine() {
+    if (f.immagine_path !== originale?.immagine_path) togli(f.immagine_path);
+    f.immagine_path = '';
+  }
+
   const fasceTesto = (n) => (n === 1 ? '1 fascia oraria' : `${n} fasce orarie`);
 </script>
 
 <div class="pagina pila-l">
   <Intestazione titolo={originale ? 'Modifica proposta' : 'Proponi un corso'}>
-    <p>Cinque passi brevi. I rappresentanti leggono ogni proposta e ti rispondono qui.</p>
+    <p>Sei passi brevi. I rappresentanti leggono ogni proposta e ti rispondono qui.</p>
   </Intestazione>
 
   {#if caricamento}
@@ -369,6 +399,32 @@
             </div>
           {:else if passo === 1}
             <div class="campo">
+              <span class="titolo-campo">Copertina <span class="facoltativo">· facoltativa</span></span>
+              <label class="copertina" class:piena={f.immagine_path} class:carica={caricando}>
+                {#if f.immagine_path}
+                  <img src={urlCopertina(f.immagine_path)} alt="Copertina del corso" />
+                {:else}
+                  <span class="disegno-copertina"><Schizzo nome="beuta" ritardo={150} /></span>
+                  <span class="invito">{caricando ? 'Comprimo e carico…' : "Tocca per scegliere un'immagine"}</span>
+                  <span class="aiuto">JPG, PNG o foto del telefono: la rimpiccioliamo noi.</span>
+                {/if}
+                {#if caricando}<span class="barra-carica" aria-hidden="true"></span>{/if}
+                <input type="file" accept="image/*" onchange={scegliImmagine} disabled={caricando} class="nascosto" />
+              </label>
+              {#if f.immagine_path}
+                <div class="riga">
+                  <label class="btn btn-tenue btn-s">
+                    Cambia
+                    <input type="file" accept="image/*" onchange={scegliImmagine} disabled={caricando} class="nascosto" />
+                  </label>
+                  <button type="button" class="btn btn-pericolo btn-s" onclick={togliImmagine} disabled={caricando}>Togli</button>
+                </div>
+              {/if}
+              {#if errori.immagine}<span class="errore-campo" role="alert">{errori.immagine}</span>{/if}
+              <span class="aiuto">Niente foto di persone senza il loro permesso. Se non la metti va bene lo stesso.</span>
+            </div>
+          {:else if passo === 2}
+            <div class="campo">
               <span class="titolo-campo" id="l-fasce">Quante fasce orarie dura</span>
               <div class="fasce" role="radiogroup" aria-labelledby="l-fasce">
                 {#each [1, 2, 3, 4, 5, 6] as n (n)}
@@ -416,7 +472,7 @@
               <span class="aiuto">Una classe intera è circa 25. Pensa a quante persone puoi seguire davvero.</span>
               {#if errori.posti}<span class="errore-campo">{errori.posti}</span>{/if}
             </div>
-          {:else if passo === 2}
+          {:else if passo === 3}
             <div class="campo">
               <span class="titolo-campo" id="l-aula">Aula richiesta</span>
               <div class="aule" role="radiogroup" aria-labelledby="l-aula">
@@ -461,7 +517,7 @@
                 assistenti tecnici.
               </p>
             {/if}
-          {:else if passo === 3}
+          {:else if passo === 4}
             <div class="campo">
               <label for="docente">Docente referente <span class="facoltativo">· facoltativo</span></label>
               <input id="docente" type="text" maxlength="80" bind:value={f.docente_referente} placeholder="Solo se serve un docente specifico" />
@@ -490,7 +546,10 @@
           {:else}
             <!-- Anteprima: la proposta come la vedranno gli studenti. -->
             <article class="anteprima">
-              <span class="sticker" aria-hidden="true"><Schizzo nome={DISEGNI_AULA[f.aula_richiesta]} ritardo={200} /></span>
+              {#if f.immagine_path}
+                <img class="copertina-anteprima" src={urlCopertina(f.immagine_path)} alt="" />
+              {/if}
+              <span class="sticker" class:su-foto={f.immagine_path} aria-hidden="true"><Schizzo nome={DISEGNI_AULA[f.aula_richiesta]} ritardo={200} /></span>
               <p class="etichetta-sezione">Come la vedranno gli studenti</p>
               <h3>{f.titolo.trim()}</h3>
               <Schizzo nome="sottolinea" class="tratto-anteprima" ritardo={350} durata={600} spessore={2.4} />
@@ -504,13 +563,13 @@
 
             <dl class="riepilogo">
               {#each [
-                { nome: 'Durata e posti', valore: `${fasceTesto(f.fasce_necessarie)}, ${f.posti_max} posti`, passo: 1 },
-                { nome: 'Aula', valore: AULE[f.aula_richiesta], passo: 2 },
-                ...(palestra ? [{ nome: 'Attività in palestra', valore: f.attivita_palestra.trim(), passo: 2 }] : []),
-                { nome: 'Docente referente', valore: f.docente_referente.trim(), passo: 3 },
-                ...(semplice ? [{ nome: 'Preferenza oraria', valore: f.preferenza_oraria.trim(), passo: 3 }] : []),
-                { nome: 'Altri conduttori', valore: f.co_conduttori.trim(), passo: 3 },
-                { nome: 'Materiale', valore: f.materiale.trim(), passo: 3 },
+                { nome: 'Durata e posti', valore: `${fasceTesto(f.fasce_necessarie)}, ${f.posti_max} posti`, passo: 2 },
+                { nome: 'Aula', valore: AULE[f.aula_richiesta], passo: 3 },
+                ...(palestra ? [{ nome: 'Attività in palestra', valore: f.attivita_palestra.trim(), passo: 3 }] : []),
+                { nome: 'Docente referente', valore: f.docente_referente.trim(), passo: 4 },
+                ...(semplice ? [{ nome: 'Preferenza oraria', valore: f.preferenza_oraria.trim(), passo: 4 }] : []),
+                { nome: 'Altri conduttori', valore: f.co_conduttori.trim(), passo: 4 },
+                { nome: 'Materiale', valore: f.materiale.trim(), passo: 4 },
               ] as r (r.nome)}
                 <div class="voce">
                   <dt>{r.nome}</dt>
@@ -551,15 +610,15 @@
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     position: relative;
   }
   .passi li { display: grid; justify-items: center; gap: 6px; }
   .filo {
     position: absolute;
     top: 21px;
-    left: 10%;
-    right: 10%;
+    left: calc(100% / 12);
+    right: calc(100% / 12);
     height: 2px;
     border-radius: 2px;
     background: var(--linea-forte);
@@ -735,6 +794,53 @@
   .disegno-aula :global(svg) { width: 100%; height: 100%; }
   .nome-aula { font-weight: 500; font-size: 15px; line-height: 1.25; }
   .nota-aula { font-size: 12.5px; line-height: 1.35; color: var(--testo-3); }
+
+  /* ── Copertina ───────────────────────── */
+  .nascosto { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .copertina {
+    position: relative;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 6px;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--raggio);
+    border: 1.5px dashed var(--linea-forte);
+    background: radial-gradient(var(--puntini) 1px, transparent 1.2px) 0 0 / 14px 14px, var(--bg);
+    text-align: center;
+    padding: var(--s-4);
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 160ms var(--ease), transform 120ms var(--ease);
+  }
+  .copertina:active { transform: scale(0.99); }
+  .copertina:focus-within { border-color: var(--accento); }
+  @media (hover: hover) and (pointer: fine) { .copertina:hover { border-color: var(--testo); } }
+  .copertina.piena { padding: 0; border-style: solid; border-color: var(--vetro-bordo); }
+  .copertina img { width: 100%; height: 100%; object-fit: cover; animation: compare 500ms var(--ease-entra) both; }
+  .disegno-copertina { width: 64px; height: 64px; color: var(--testo); }
+  .disegno-copertina :global(svg) { width: 100%; height: 100%; }
+  .invito { font-weight: 500; }
+  .copertina.carica .disegno-copertina { animation: dondola 1.2s var(--ease) infinite alternate; }
+  @keyframes dondola { from { transform: rotate(-6deg); } to { transform: rotate(6deg); } }
+  .barra-carica {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 40%;
+    background: var(--rosso);
+    animation: scorre 1.1s var(--ease) infinite;
+  }
+  @keyframes scorre { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+  .copertina-anteprima {
+    width: calc(100% + 2 * var(--s-4));
+    margin: calc(-1 * var(--s-4)) calc(-1 * var(--s-4)) var(--s-2);
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+  }
+  .sticker.su-foto { display: none; }
 
   /* ── Riepilogo ───────────────────────── */
   .anteprima {

@@ -1,4 +1,5 @@
 <script>
+  import { urlCopertina } from '../lib/copertine.js';
   import Schizzo from '../componenti/Schizzo.svelte';
   import Intestazione from '../componenti/Intestazione.svelte';
   import { supabase } from '../lib/supabase.js';
@@ -62,6 +63,7 @@
     <ul class="elenco">
       {#each corsi as c, i (c.id)}
         <li class="carta pila" use:appare={{ ritardo: i * 80 }} animate:flip={{ duration: 300 }} out:fade={{ duration: 180 }}>
+          {#if c.immagine_path}<img class="copertina" src={urlCopertina(c.immagine_path)} alt="" loading="lazy" />{/if}
           <div class="riga">
             <span class="badge badge-{c.stato}">{STATI[c.stato]}</span>
             <span class="attenuato piccolo spinge">{AULE[c.aula_richiesta]}</span>
@@ -93,6 +95,8 @@
 </div>
 
 <style>
+  .copertina { display: block; width: calc(100% + 2 * var(--s-4)); margin: calc(-1 * var(--s-4)) calc(-1 * var(--s-4)) var(--s-1); aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--raggio-l) var(--raggio-l) 0 0; }
+  @media (min-width: 640px) { .copertina { width: calc(100% + 2 * var(--s-5)); margin: calc(-1 * var(--s-5)) calc(-1 * var(--s-5)) var(--s-1); } }
   .vuoto-disegno { width: 72px; height: 72px; color: var(--testo); }
   .vuoto-disegno :global(svg) { width: 100%; height: 100%; }
   .elenco { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }

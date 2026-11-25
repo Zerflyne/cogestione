@@ -30,6 +30,15 @@
   .d { position: absolute; }
   .formula { position: absolute; font: 500 30px 'Gabarito'; color: var(--testo-3); }
   .formula.r { color: var(--rosso); }
+  body.semplice .testi { top: 70px; width: 820px; }
+  body.semplice .sopra { margin-top: 70px; font-size: 26px; }
+  body.semplice h1 { margin-top: 10px; font-size: 168px; letter-spacing: -0.05em; }
+  body.semplice .segnato svg { bottom: -22px; height: 34px; }
+  body.semplice .sotto { margin-top: 56px; font-size: 34px; color: var(--testo); width: 760px; }
+  body.semplice .decoro { display: none; }
+  body.semplice .dominio { bottom: 52px; font-size: 24px; }
+  .grande { display: none; }
+  body.semplice .grande { display: block; }
 </style>
 </head>
 <body>
@@ -45,14 +54,14 @@
   <p class="dominio" id="dominio"></p>
 
   <!-- Atomo -->
-  <svg class="s d" style="left:860px; top:60px; width:250px" viewBox="0 0 96 96">
+  <svg class="s d decoro" style="left:860px; top:60px; width:250px" viewBox="0 0 96 96">
     <g transform="rotate(0 48 48)"><path stroke-width="1.6" d="M8 48 C 8 29.3, 88 29.3, 88 48 C 88 66.7, 8 66.7, 8 48"/><circle class="pieno" r="3" cx="8" cy="48"/></g>
     <g transform="rotate(60 48 48)"><path stroke-width="1.6" d="M8 48 C 8 29.3, 88 29.3, 88 48 C 88 66.7, 8 66.7, 8 48"/><circle class="pieno" r="3" cx="88" cy="48"/></g>
     <g transform="rotate(-60 48 48)"><path stroke-width="1.6" d="M8 48 C 8 29.3, 88 29.3, 88 48 C 88 66.7, 8 66.7, 8 48"/><circle class="pieno" r="3" cx="60" cy="38"/></g>
     <path stroke-width="2.4" class="rosso" d="M48 42 C 43 42, 42 47, 43 50 C 45 55, 53 54, 54 49 C 55 44, 51 41, 46 43"/>
   </svg>
   <!-- Beuta -->
-  <svg class="s d" style="left:930px; top:330px; width:200px" viewBox="0 0 96 96">
+  <svg class="s d decoro" style="left:930px; top:330px; width:200px" viewBox="0 0 96 96">
     <path stroke-width="1.9" d="M40 14 C 40 22, 41 30, 40 38 C 33 52, 25 66, 18 80 C 16 85, 18 87, 23 87 C 40 86, 57 87, 74 86 C 79 86, 80 84, 78 80 C 71 66, 63 52, 56 38 C 55 30, 56 22, 56 14"/>
     <path stroke-width="1.9" d="M35 14 C 44 13, 52 14, 61 13"/>
     <path stroke-width="2.2" class="rosso" d="M28 64 C 38 61, 48 67, 58 63 C 62 62, 66 63, 69 64"/>
@@ -60,17 +69,25 @@
     <circle class="rosso" cx="42" cy="74" r="2.6" stroke-width="1.4"/><circle class="rosso" cx="53" cy="56" r="2" stroke-width="1.4"/><circle class="rosso" cx="48" cy="44" r="2.6" stroke-width="1.4"/><circle class="rosso" cx="58" cy="76" r="1.8" stroke-width="1.4"/>
   </svg>
   <!-- Compasso -->
-  <svg class="s d" style="left:790px; top:380px; width:120px; transform: rotate(-14deg)" viewBox="0 0 96 96">
+  <svg class="s d decoro" style="left:790px; top:380px; width:120px; transform: rotate(-14deg)" viewBox="0 0 96 96">
     <path stroke-width="2.2" d="M48 9 C 43 9, 42 15, 45 18 C 48 21, 54 18, 53 13 C 52 10, 50 9, 47 10"/>
     <path stroke-width="2.2" d="M48 9 L 48 3"/>
     <path stroke-width="2.2" d="M45 19 C 39 40, 33 60, 27 80"/>
     <path stroke-width="2.2" d="M51 19 C 56 36, 60 50, 64 68 L 69 66 L 70 80 L 63 70"/>
     <path stroke-width="2.4" class="rosso" d="M18 86 C 32 93, 56 93, 76 82"/>
   </svg>
-  <span class="formula r" style="left:1010px; top:290px">E = mc²</span>
-  <span class="formula" style="left:800px; top:300px">∫ f(x) dx</span>
-  <span class="formula" style="left:860px; top:545px">a² + b² = c²</span>
-  <span class="formula r" style="left:1090px; top:40px; font-size:26px">H₂O</span>
+  <span class="decoro formula r" style="left:1010px; top:290px">E = mc²</span>
+  <span class="decoro formula" style="left:800px; top:300px">∫ f(x) dx</span>
+  <span class="decoro formula" style="left:860px; top:545px">a² + b² = c²</span>
+  <span class="decoro formula r" style="left:1090px; top:40px; font-size:26px">H₂O</span>
+
+<!-- Beuta grande, per la versione semplice -->
+  <svg class="s d grande" style="left:880px; top:150px; width:300px" viewBox="0 0 96 96">
+    <path stroke-width="2.4" d="M40 14 C 40 22, 41 30, 40 38 C 33 52, 25 66, 18 80 C 16 85, 18 87, 23 87 C 40 86, 57 87, 74 86 C 79 86, 80 84, 78 80 C 71 66, 63 52, 56 38 C 55 30, 56 22, 56 14"/>
+    <path stroke-width="2.4" d="M35 14 C 44 13, 52 14, 61 13"/>
+    <path stroke-width="3" class="rosso" d="M28 64 C 38 61, 48 67, 58 63 C 62 62, 66 63, 69 64"/>
+    <circle class="rosso" cx="42" cy="74" r="2.8" stroke-width="1.8"/><circle class="rosso" cx="53" cy="54" r="2.2" stroke-width="1.8"/><circle class="rosso" cx="47" cy="42" r="2.8" stroke-width="1.8"/><circle class="rosso" cx="58" cy="76" r="2" stroke-width="1.8"/>
+  </svg>
 
 <script>
   const p = new URLSearchParams(location.search);
@@ -82,13 +99,15 @@
       dominio: 'studentitorricelli.org',
     },
     cogestione: {
-      sopra: 'Cogestione · IIS Torricelli',
-      titolo: 'La cogestione <span class="segnato">la fate voi<svg viewBox="0 0 300 24" preserveAspectRatio="none" class="s"><path class="rosso" stroke-width="4" d="M4 15 C 60 9, 140 8, 210 10 S 280 12, 296 9"/><path class="rosso" stroke-width="2.6" d="M30 20 C 90 15, 170 15, 270 17"/></svg></span>.',
-      sotto: 'Cinque giorni di corsi proposti dagli studenti: proponi, guarda il programma, iscriviti.',
+      semplice: true,
+      sopra: 'IIS Evangelista Torricelli',
+      titolo: '<span class="segnato">Cogestione<svg viewBox="0 0 300 24" preserveAspectRatio="none" class="s"><path class="rosso" stroke-width="4" d="M4 15 C 60 9, 140 8, 210 10 S 280 12, 296 9"/><path class="rosso" stroke-width="2.6" d="M30 20 C 90 15, 170 15, 270 17"/></svg></span>',
+      sotto: 'Proponi un corso e iscriviti.',
       dominio: 'studentitorricelli.org<b>/cogestione</b>',
     },
   }[p.get('pagina') || 'sito'];
-  for (const k in t) document.getElementById(k).innerHTML = t[k];
+  if (t.semplice) document.body.classList.add('semplice');
+  for (const k of ['sopra', 'titolo', 'sotto', 'dominio']) document.getElementById(k).innerHTML = t[k];
 </script>
 </body>
 </html>

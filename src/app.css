@@ -497,3 +497,23 @@ a.carta-viva:active { transform: translateY(0) scale(0.995); transition-duration
 
 .intestazione-pagina .indietro { justify-self: start; margin-bottom: var(--s-2); font-size: var(--t-small); line-height: 2.2; }
 .intestazione-pagina p.piccolo { font-size: var(--t-small); }
+
+/* Colori delle locandine dei corsi: una tinta scelta da chi propone. */
+.tinta-inchiostro { --tinta: var(--testo); }
+.tinta-porpora { --tinta: #7a1f5c; }
+.tinta-rosso { --tinta: #9e0000; }
+.tinta-blu { --tinta: #1f4e8c; }
+.tinta-verde { --tinta: #2f6b40; }
+.tinta-ocra { --tinta: #8a5a00; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .tinta-porpora { --tinta: #d98bb8; }
+  :root:not([data-theme='light']) .tinta-rosso { --tinta: #f0524a; }
+  :root:not([data-theme='light']) .tinta-blu { --tinta: #86aee6; }
+  :root:not([data-theme='light']) .tinta-verde { --tinta: #8fcf9f; }
+  :root:not([data-theme='light']) .tinta-ocra { --tinta: #e8c16f; }
+}
+:root[data-theme='dark'] .tinta-porpora { --tinta: #d98bb8; }
+:root[data-theme='dark'] .tinta-rosso { --tinta: #f0524a; }
+:root[data-theme='dark'] .tinta-blu { --tinta: #86aee6; }
+:root[data-theme='dark'] .tinta-verde { --tinta: #8fcf9f; }
+:root[data-theme='dark'] .tinta-ocra { --tinta: #e8c16f; }

@@ -1,5 +1,5 @@
 <script>
-  // Proponi un corso, a passi: l'idea, la durata, il posto, chi e cosa serve, il riepilogo.
+  // Proponi un corso, a passi: l'idea, la locandina, l'aula, ore e posti, chi e cosa serve, il riepilogo.
   // Ogni passo si controlla prima di andare avanti; la bozza resta su questo dispositivo
   // finché non la invii, così chi esce a metà ritrova tutto.
   import Intestazione from '../componenti/Intestazione.svelte';
@@ -12,6 +12,8 @@
   import { cubicOut } from 'svelte/easing';
   import { tick, untrack } from 'svelte';
   import { carica, togli, urlCopertina } from '../lib/copertine.js';
+  import { COLORI, ICONE, ICONA_AULA } from '../lib/locandina.js';
+  import Locandina from '../componenti/Locandina.svelte';
 
   let { id = null } = $props();
 
@@ -19,7 +21,7 @@
     titolo: '',
     descrizione: '',
     fasce_necessarie: 1,
-    posti_max: 25,
+    posti_max: 20,
     aula_richiesta: 'normale',
     attivita_palestra: '',
     docente_referente: '',
@@ -27,13 +29,20 @@
     co_conduttori: '',
     materiale: '',
     immagine_path: '',
+    distribuzione_ore: '',
+    colore: 'inchiostro',
+    icona: '',
   };
+
+  // Limiti di posti di riserva, se le impostazioni non li hanno ancora.
+  const LIMITI_BASE = { normale: 20, lab_informatica: 20, lab_fisica: 20, lab_chimica: 20 };
+  const LABORATORI = ['lab_informatica', 'lab_fisica', 'lab_chimica'];
 
   const PASSI = [
     { titolo: "L'idea", sotto: 'Come si chiama e di cosa parla.', disegno: 'lampadina' },
-    { titolo: 'Immagine', sotto: 'Una foto o un disegno che faccia venire voglia di iscriversi.', disegno: 'stella' },
-    { titolo: 'Durata e posti', sotto: 'Quanto tempo serve e quante persone possono venire.', disegno: 'clessidra' },
+    { titolo: 'Locandina', sotto: 'Colore, icona e, se vuoi, una foto: così il corso si fa notare.', disegno: 'stella' },
     { titolo: 'Dove', sotto: "Scegli l'aula che ti serve.", disegno: 'compasso' },
+    { titolo: 'Ore e posti', sotto: 'Quanto dura e quante persone possono venire.', disegno: 'clessidra' },
     { titolo: 'Chi e cosa serve', sotto: 'Docenti, compagni che conducono con te, materiale.', disegno: 'persone' },
     { titolo: 'Riepilogo', sotto: 'Controlla e invia: potrai modificarla finché non viene approvata.', disegno: 'lente' },
   ];
@@ -73,6 +82,22 @@
   const modificabile = $derived(!originale || ['inviata', 'da_modificare'].includes(originale.stato));
   const semplice = $derived(f.aula_richiesta === 'normale' && !f.docente_referente.trim());
   const palestra = $derived(f.aula_richiesta === 'palestra');
+  const laboratorio = $derived(LABORATORI.includes(f.aula_richiesta));
+  const limiti = $derived(app.impostazioni?.posti_max_aula ?? LIMITI_BASE);
+  const limiteDi = (aula) => {
+    const n = Number(limiti?.[aula]);
+    return n >= 5 ? n : null;
+  };
+  const limitePosti = $derived(limiteDi(f.aula_richiesta));
+  const maxPosti = $derived(limitePosti ?? 300);
+  const iconaScelta = $derived(f.icona || ICONA_AULA[f.aula_richiesta]);
+
+  function scegliAula(valore) {
+    f.aula_richiesta = valore;
+    delete errori.docente;
+    const l = limiteDi(valore);
+    if (l && f.posti_max > l) f.posti_max = l;
+  }
 
   // ── Bozza su questo dispositivo ────────────
   const chiave = $derived(`bozza-proposta:${id ?? 'nuova'}`);
@@ -157,13 +182,16 @@
     }
     if (n === 1 && caricando) e.immagine = 'Aspetta che finisca il caricamento.';
     if (n === 2) {
-      if (!(f.fasce_necessarie >= 1 && f.fasce_necessarie <= 6)) e.fasce = 'Le fasce orarie vanno da 1 a 6.';
-      if (!(f.posti_max >= 5 && f.posti_max <= 300)) e.posti = 'I posti vanno da 5 a 300.';
-    }
-    if (n === 3) {
       if (!AULE[f.aula_richiesta]) e.aula = "Scegli un'aula.";
       if (palestra && f.attivita_palestra.trim().length < 20)
         e.palestra = "Descrivi l'attività in palestra in almeno 20 caratteri.";
+      if (laboratorio && f.docente_referente.trim().length < 3)
+        e.docente = 'Nei laboratori serve un docente referente: scrivi nome e cognome.';
+    }
+    if (n === 3) {
+      if (!(f.fasce_necessarie >= 1 && f.fasce_necessarie <= 6)) e.fasce = 'Le ore vanno da 1 a 6.';
+      if (!(f.posti_max >= 5 && f.posti_max <= maxPosti))
+        e.posti = limitePosti ? `In quest'aula i posti vanno da 5 a ${limitePosti}.` : 'I posti vanno da 5 a 300.';
     }
     return e;
   }
@@ -214,7 +242,7 @@
 
   // ── Numeri: fasce e posti ──────────────────
   const limita = (v, min, max) => Math.min(max, Math.max(min, Math.round(Number(v) || min)));
-  const cambiaPosti = (d) => (f.posti_max = limita(Number(f.posti_max) + d, 5, 300));
+  const cambiaPosti = (d) => (f.posti_max = limita(Number(f.posti_max) + d, 5, maxPosti));
 
   // ── Invio ──────────────────────────────────
   const vuotoANull = (v) => (typeof v === 'string' ? v.trim() || null : v);
@@ -241,6 +269,9 @@
       co_conduttori: vuotoANull(f.co_conduttori),
       materiale: vuotoANull(f.materiale),
       immagine_path: vuotoANull(f.immagine_path),
+      distribuzione_ore: f.fasce_necessarie > 1 ? vuotoANull(f.distribuzione_ore) : null,
+      colore: COLORI[f.colore] ? f.colore : 'inchiostro',
+      icona: ICONE[f.icona] ? f.icona : null,
     };
     const { error } = originale
       ? await supabase.from('corsi').update(dati).eq('id', originale.id)
@@ -284,7 +315,8 @@
     f.immagine_path = '';
   }
 
-  const fasceTesto = (n) => (n === 1 ? '1 fascia oraria' : `${n} fasce orarie`);
+  const fasceTesto = (n) => (n === 1 ? '1 ora' : `${n} ore`);
+  const DISTRIBUZIONI = ['Tutte di fila, lo stesso giorno', 'Un po’ ogni giorno', 'Su due o tre giorni'];
 </script>
 
 <div class="pagina pila-l">
@@ -399,7 +431,45 @@
             </div>
           {:else if passo === 1}
             <div class="campo">
-              <span class="titolo-campo">Copertina <span class="facoltativo">· facoltativa</span></span>
+              <span class="titolo-campo" id="l-colore">Colore</span>
+              <div class="colori" role="radiogroup" aria-labelledby="l-colore">
+                {#each Object.entries(COLORI) as [valore, nome], i (valore)}
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={f.colore === valore}
+                    aria-label={nome}
+                    title={nome}
+                    class="colore tinta-{valore}"
+                    style="--i: {i}"
+                    onclick={() => (f.colore = valore)}
+                  ></button>
+                {/each}
+              </div>
+            </div>
+
+            <div class="campo">
+              <span class="titolo-campo" id="l-icona">Icona</span>
+              <div class="icone tinta-{f.colore}" role="radiogroup" aria-labelledby="l-icona">
+                {#each Object.entries(ICONE) as [valore, nome], i (valore)}
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={iconaScelta === valore}
+                    aria-label={nome}
+                    title={nome}
+                    class="icona-scelta"
+                    style="--i: {i}"
+                    onclick={() => (f.icona = valore)}
+                  >
+                    <Schizzo nome={valore} ritardo={60 + i * 40} />
+                  </button>
+                {/each}
+              </div>
+            </div>
+
+            <div class="campo">
+              <span class="titolo-campo">Foto <span class="facoltativo">· facoltativa, prende il posto dell'icona</span></span>
               <label class="copertina" class:piena={f.immagine_path} class:carica={caricando}>
                 {#if f.immagine_path}
                   <img src={urlCopertina(f.immagine_path)} alt="Copertina del corso" />
@@ -423,56 +493,15 @@
               {#if errori.immagine}<span class="errore-campo" role="alert">{errori.immagine}</span>{/if}
               <span class="aiuto">Niente foto di persone senza il loro permesso. Se non la metti va bene lo stesso.</span>
             </div>
-          {:else if passo === 2}
-            <div class="campo">
-              <span class="titolo-campo" id="l-fasce">Quante fasce orarie dura</span>
-              <div class="fasce" role="radiogroup" aria-labelledby="l-fasce">
-                {#each [1, 2, 3, 4, 5, 6] as n (n)}
-                  <button
-                    type="button"
-                    role="radio"
-                    aria-checked={f.fasce_necessarie === n}
-                    aria-label={fasceTesto(n)}
-                    class="fascia"
-                    class:piena={n <= f.fasce_necessarie}
-                    style="--i: {n}"
-                    onclick={() => (f.fasce_necessarie = n)}
-                  >
-                    <span>{n}</span>
-                  </button>
-                {/each}
-              </div>
-              <span class="aiuto">
-                <strong>{fasceTesto(f.fasce_necessarie)}</strong>. Se il corso è lungo lo mettiamo in fasce consecutive.
-              </span>
-              {#if errori.fasce}<span class="errore-campo">{errori.fasce}</span>{/if}
-            </div>
 
             <div class="campo">
-              <label for="posti">Quanti posti al massimo</label>
-              <div class="contatore-grande">
-                <button type="button" class="btn btn-tenue tondo" aria-label="5 posti in meno" disabled={f.posti_max <= 5} onclick={() => cambiaPosti(-5)}>−</button>
-                <input
-                  id="posti"
-                  type="number"
-                  inputmode="numeric"
-                  min="5"
-                  max="300"
-                  bind:value={f.posti_max}
-                  onblur={() => (f.posti_max = limita(f.posti_max, 5, 300))}
-                  aria-invalid={Boolean(errori.posti)}
-                />
-                <button type="button" class="btn btn-tenue tondo" aria-label="5 posti in più" disabled={f.posti_max >= 300} onclick={() => cambiaPosti(5)}>+</button>
+              <span class="titolo-campo">Così apparirà</span>
+              <div class="mini-locandina">
+                <Locandina corso={{ ...f, icona: iconaScelta }} />
+                <p class="mini-titolo">{f.titolo.trim() || 'Il tuo corso'}</p>
               </div>
-              <div class="riga scorciatoie">
-                {#each [15, 25, 40, 60, 100] as n (n)}
-                  <button type="button" class="scheda piccola" aria-pressed={Number(f.posti_max) === n} onclick={() => (f.posti_max = n)}>{n}</button>
-                {/each}
-              </div>
-              <span class="aiuto">Una classe intera è circa 25. Pensa a quante persone puoi seguire davvero.</span>
-              {#if errori.posti}<span class="errore-campo">{errori.posti}</span>{/if}
             </div>
-          {:else if passo === 3}
+          {:else if passo === 2}
             <div class="campo">
               <span class="titolo-campo" id="l-aula">Aula richiesta</span>
               <div class="aule" role="radiogroup" aria-labelledby="l-aula">
@@ -483,15 +512,32 @@
                     aria-checked={f.aula_richiesta === valore}
                     class="aula"
                     style="--i: {i}"
-                    onclick={() => (f.aula_richiesta = valore)}
+                    onclick={() => scegliAula(valore)}
                   >
                     <span class="disegno-aula"><Schizzo nome={DISEGNI_AULA[valore]} ritardo={80 + i * 70} /></span>
                     <span class="nome-aula">{testo}</span>
-                    <span class="nota-aula">{NOTE_AULA[valore]}</span>
+                    <span class="nota-aula">{NOTE_AULA[valore]}{#if limiteDi(valore)}{` · max ${limiteDi(valore)}`}{/if}</span>
                   </button>
                 {/each}
               </div>
             </div>
+
+            {#if laboratorio}
+              <div class="campo" transition:slide={{ duration: 300, easing: cubicOut }}>
+                <label for="docente">Docente referente</label>
+                <input
+                  id="docente"
+                  type="text"
+                  maxlength="80"
+                  bind:value={f.docente_referente}
+                  placeholder="Nome e cognome del docente"
+                  aria-invalid={Boolean(errori.docente)}
+                  oninput={() => delete errori.docente}
+                />
+                {#if errori.docente}<span class="errore-campo">{errori.docente}</span>{/if}
+                <span class="aiuto">Nei laboratori serve sempre un docente che segua il corso. Chiediglielo prima di proporlo.</span>
+              </div>
+            {/if}
 
             {#if palestra}
               <div class="campo" transition:slide={{ duration: 300, easing: cubicOut }}>
@@ -517,11 +563,77 @@
                 assistenti tecnici.
               </p>
             {/if}
-          {:else if passo === 4}
+          {:else if passo === 3}
             <div class="campo">
-              <label for="docente">Docente referente <span class="facoltativo">· facoltativo</span></label>
-              <input id="docente" type="text" maxlength="80" bind:value={f.docente_referente} placeholder="Solo se serve un docente specifico" />
+              <span class="titolo-campo" id="l-fasce">Quante ore dura</span>
+              <div class="fasce" role="radiogroup" aria-labelledby="l-fasce">
+                {#each [1, 2, 3, 4, 5, 6] as n (n)}
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={f.fasce_necessarie === n}
+                    aria-label={fasceTesto(n)}
+                    class="fascia"
+                    class:piena={n <= f.fasce_necessarie}
+                    style="--i: {n}"
+                    onclick={() => (f.fasce_necessarie = n)}
+                  >
+                    <span>{n}</span>
+                  </button>
+                {/each}
+              </div>
+              <span class="aiuto">
+                <strong>{fasceTesto(f.fasce_necessarie)}</strong> in tutto, al massimo 6.
+              </span>
+              {#if errori.fasce}<span class="errore-campo">{errori.fasce}</span>{/if}
             </div>
+
+            {#if f.fasce_necessarie > 1}
+              <div class="campo" transition:slide={{ duration: 300, easing: cubicOut }}>
+                <label for="distribuzione">Come vorresti distribuirle <span class="facoltativo">· facoltativo</span></label>
+                <div class="riga scorciatoie">
+                  {#each DISTRIBUZIONI as d (d)}
+                    <button type="button" class="scheda piccola testo" aria-pressed={f.distribuzione_ore === d} onclick={() => (f.distribuzione_ore = d)}>{d}</button>
+                  {/each}
+                </div>
+                <input id="distribuzione" type="text" maxlength="200" bind:value={f.distribuzione_ore} placeholder="es. 3 giorni da 2 ore" />
+                <span class="aiuto">È una richiesta: il calendario lo compongono i rappresentanti.</span>
+              </div>
+            {/if}
+
+            <div class="campo">
+              <label for="posti">Quanti posti al massimo</label>
+              <div class="contatore-grande">
+                <button type="button" class="btn btn-tenue tondo" aria-label="5 posti in meno" disabled={f.posti_max <= 5} onclick={() => cambiaPosti(-5)}>−</button>
+                <input
+                  id="posti"
+                  type="number"
+                  inputmode="numeric"
+                  min="5"
+                  max={maxPosti}
+                  bind:value={f.posti_max}
+                  onblur={() => (f.posti_max = limita(f.posti_max, 5, maxPosti))}
+                  aria-invalid={Boolean(errori.posti)}
+                />
+                <button type="button" class="btn btn-tenue tondo" aria-label="5 posti in più" disabled={f.posti_max >= maxPosti} onclick={() => cambiaPosti(5)}>+</button>
+              </div>
+              <div class="riga scorciatoie">
+                {#each [10, 15, 20, 25, 40, 60, 100].filter((n) => n <= maxPosti) as n (n)}
+                  <button type="button" class="scheda piccola" aria-pressed={Number(f.posti_max) === n} onclick={() => (f.posti_max = n)}>{n}</button>
+                {/each}
+              </div>
+              <span class="aiuto">
+                {#if limitePosti}In {AULE[f.aula_richiesta].toLowerCase()} ci stanno al massimo <strong>{limitePosti} persone</strong>.{:else}Pensa a quante persone puoi seguire davvero.{/if}
+              </span>
+              {#if errori.posti}<span class="errore-campo">{errori.posti}</span>{/if}
+            </div>
+          {:else if passo === 4}
+            {#if !laboratorio}
+              <div class="campo">
+                <label for="docente">Docente referente <span class="facoltativo">· facoltativo</span></label>
+                <input id="docente" type="text" maxlength="80" bind:value={f.docente_referente} placeholder="Solo se serve un docente specifico" />
+              </div>
+            {/if}
 
             {#if semplice}
               <div class="campo" transition:slide={{ duration: 300, easing: cubicOut }}>
@@ -546,27 +658,28 @@
           {:else}
             <!-- Anteprima: la proposta come la vedranno gli studenti. -->
             <article class="anteprima">
-              {#if f.immagine_path}
-                <img class="copertina-anteprima" src={urlCopertina(f.immagine_path)} alt="" />
-              {/if}
-              <span class="sticker" class:su-foto={f.immagine_path} aria-hidden="true"><Schizzo nome={DISEGNI_AULA[f.aula_richiesta]} ritardo={200} /></span>
-              <p class="etichetta-sezione">Come la vedranno gli studenti</p>
-              <h3>{f.titolo.trim()}</h3>
-              <Schizzo nome="sottolinea" class="tratto-anteprima" ritardo={350} durata={600} spessore={2.4} />
-              <p class="descr">{f.descrizione.trim()}</p>
-              <div class="riga">
-                <span class="pillola">{AULE[f.aula_richiesta]}</span>
-                <span class="pillola">{fasceTesto(f.fasce_necessarie)}</span>
-                <span class="pillola">{f.posti_max} posti</span>
+              <Locandina corso={{ ...f, icona: iconaScelta }} ritardo={200} />
+              <div class="corpo-anteprima">
+                <p class="etichetta-sezione">Come la vedranno gli studenti</p>
+                <h3>{f.titolo.trim()}</h3>
+                <Schizzo nome="sottolinea" class="tratto-anteprima tinta-{f.colore}" ritardo={350} durata={600} spessore={2.4} />
+                <p class="descr">{f.descrizione.trim()}</p>
+                <div class="riga">
+                  <span class="pillola">{AULE[f.aula_richiesta]}</span>
+                  <span class="pillola">{fasceTesto(f.fasce_necessarie)}</span>
+                  <span class="pillola">{f.posti_max} posti</span>
+                </div>
               </div>
             </article>
 
             <dl class="riepilogo">
               {#each [
-                { nome: 'Durata e posti', valore: `${fasceTesto(f.fasce_necessarie)}, ${f.posti_max} posti`, passo: 2 },
-                { nome: 'Aula', valore: AULE[f.aula_richiesta], passo: 3 },
-                ...(palestra ? [{ nome: 'Attività in palestra', valore: f.attivita_palestra.trim(), passo: 3 }] : []),
-                { nome: 'Docente referente', valore: f.docente_referente.trim(), passo: 4 },
+                { nome: 'Locandina', valore: `${COLORI[f.colore]}, ${ICONE[iconaScelta] ?? ''}${f.immagine_path ? ', con foto' : ''}`, passo: 1 },
+                { nome: 'Aula', valore: AULE[f.aula_richiesta], passo: 2 },
+                ...(palestra ? [{ nome: 'Attività in palestra', valore: f.attivita_palestra.trim(), passo: 2 }] : []),
+                { nome: 'Ore e posti', valore: `${fasceTesto(f.fasce_necessarie)}, ${f.posti_max} posti`, passo: 3 },
+                ...(f.fasce_necessarie > 1 ? [{ nome: 'Distribuzione delle ore', valore: f.distribuzione_ore.trim(), passo: 3 }] : []),
+                { nome: 'Docente referente', valore: f.docente_referente.trim(), passo: laboratorio ? 2 : 4 },
                 ...(semplice ? [{ nome: 'Preferenza oraria', valore: f.preferenza_oraria.trim(), passo: 4 }] : []),
                 { nome: 'Altri conduttori', valore: f.co_conduttori.trim(), passo: 4 },
                 { nome: 'Materiale', valore: f.materiale.trim(), passo: 4 },
@@ -833,34 +946,65 @@
     animation: scorre 1.1s var(--ease) infinite;
   }
   @keyframes scorre { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
-  .copertina-anteprima {
-    width: calc(100% + 2 * var(--s-4));
-    margin: calc(-1 * var(--s-4)) calc(-1 * var(--s-4)) var(--s-2);
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-    display: block;
+  /* Colori e icone della locandina. */
+  .colori { display: flex; flex-wrap: wrap; gap: 10px; }
+  .colore {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 3px solid var(--superficie);
+    background: var(--tinta);
+    box-shadow: 0 0 0 1px var(--linea-forte);
+    cursor: pointer;
+    animation: compare 380ms var(--ease-entra) both;
+    animation-delay: calc(var(--i) * 40ms);
+    transition: transform 160ms var(--ease), box-shadow 160ms var(--ease);
   }
-  .sticker.su-foto { display: none; }
+  .colore:active { transform: scale(0.9); }
+  .colore[aria-checked='true'] { box-shadow: 0 0 0 2px var(--tinta); transform: scale(1.08); }
+  .icone { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .icona-scelta {
+    aspect-ratio: 1;
+    padding: 8px;
+    border-radius: var(--raggio-s);
+    border: 1px solid var(--linea);
+    background: var(--superficie);
+    color: var(--testo);
+    cursor: pointer;
+    animation: compare 380ms var(--ease-entra) both;
+    animation-delay: calc(var(--i) * 30ms);
+    transition: border-color 160ms var(--ease), background-color 160ms var(--ease), color 160ms var(--ease), transform 120ms var(--ease);
+  }
+  .icona-scelta :global(svg) { width: 100%; height: 100%; }
+  .icona-scelta:active { transform: scale(0.92); }
+  .icona-scelta[aria-checked='true'] {
+    color: var(--tinta);
+    border-color: var(--tinta);
+    background: color-mix(in oklab, var(--tinta) 10%, var(--superficie));
+    box-shadow: inset 0 0 0 1px var(--tinta);
+  }
+  .icona-scelta :global(.schizzo .rosso),
+  .icona-scelta :global(.schizzo path.rosso) { stroke: var(--tinta); }
+  .icona-scelta :global(.schizzo .pieno) { fill: var(--tinta); }
+  .mini-locandina { border-radius: var(--raggio); overflow: hidden; border: 1px solid var(--linea); background: var(--superficie); }
+  .mini-titolo { margin: 0; padding: 10px 14px 12px; font: 600 17px/1.25 var(--serif); overflow-wrap: anywhere; }
+  .scheda.testo { font: 500 13.5px/1 var(--sans); }
 
   /* ── Riepilogo ───────────────────────── */
   .anteprima {
     position: relative;
     display: grid;
-    gap: var(--s-2);
-    padding: var(--s-4);
     border-radius: var(--raggio);
-    background:
-      radial-gradient(var(--puntini) 1px, transparent 1.2px) 0 0 / 14px 14px,
-      var(--bg);
-    border: 1px dashed var(--linea-forte);
+    background: var(--superficie);
+    border: 1px solid var(--linea-forte);
     overflow: hidden;
   }
+  .corpo-anteprima { display: grid; gap: var(--s-2); padding: var(--s-4); }
   .anteprima .etichetta-sezione { margin: 0; }
-  .anteprima h3 { font-size: 22px; margin: 0; padding-right: 56px; overflow-wrap: anywhere; }
-  .anteprima :global(.tratto-anteprima) { width: 72px; height: 10px; color: var(--rosso); margin-top: -4px; }
+  .anteprima h3 { font-size: 22px; margin: 0; overflow-wrap: anywhere; }
+  .anteprima :global(.tratto-anteprima) { width: 72px; height: 10px; color: var(--tinta); margin-top: -4px; }
+  .anteprima :global(.tratto-anteprima path) { stroke: var(--tinta); }
   .anteprima .descr { margin: 0; color: var(--testo-2); font-size: 15px; white-space: pre-line; overflow-wrap: anywhere; }
-  .sticker { position: absolute; top: 12px; right: 12px; width: 48px; height: 48px; color: var(--testo); transform: rotate(8deg); }
-  .sticker :global(svg) { width: 100%; height: 100%; }
   .pillola {
     font-size: 12.5px;
     line-height: 1;

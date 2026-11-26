@@ -4,7 +4,7 @@
   import Schizzo from '../componenti/Schizzo.svelte';
   import { supabase } from '../lib/supabase.js';
   import { app, caricaImpostazioni } from '../lib/stato.svelte.js';
-  import { FASI, messaggioErrore } from '../lib/etichette.js';
+  import { FASI, AULE, messaggioErrore } from '../lib/etichette.js';
 
   const imp = app.impostazioni ?? {};
   // datetime-local vuole "AAAA-MM-GGTHH:MM" nell'ora locale.
@@ -24,6 +24,10 @@
   };
 
   const partenza = { fase: imp.fase ?? 'chiusa', apertura: aLocale(imp.proposte_apertura), chiusura: aLocale(imp.proposte_chiusura) };
+  // Posti massimi per tipo di aula: vuoto = nessun limite (oltre ai 300 generali).
+  const limitiIniziali = Object.fromEntries(Object.keys(AULE).map((a) => [a, imp.posti_max_aula?.[a] != null ? String(imp.posti_max_aula[a]) : '']));
+  let limiti = $state({ ...limitiIniziali });
+  let limitiSalvati = $state(JSON.stringify(limitiIniziali));
   let iniziale = $state(partenza);
   let fase = $state(partenza.fase);
   let apertura = $state(partenza.apertura);
@@ -32,7 +36,7 @@
   let messaggio = $state(null);
   let inCorso = $state(false);
 
-  const modificato = $derived(fase !== iniziale.fase || apertura !== iniziale.apertura || chiusura !== iniziale.chiusura);
+  const modificato = $derived(fase !== iniziale.fase || apertura !== iniziale.apertura || chiusura !== iniziale.chiusura || JSON.stringify(limiti) !== limitiSalvati);
   const bloccato = $derived(Boolean(app.impostazioni?.calendario_bloccato));
 
   async function salva(e) {
@@ -42,15 +46,26 @@
       errore = "La chiusura delle proposte deve venire dopo l'apertura.";
       return;
     }
+    const posti_max_aula = {};
+    for (const [aula, v] of Object.entries(limiti)) {
+      if (String(v).trim() === '') continue;
+      const n = Number(v);
+      if (!Number.isInteger(n) || n < 5 || n > 300) {
+        errore = `Posti per ${AULE[aula].toLowerCase()}: scrivi un numero da 5 a 300, oppure lascia vuoto.`;
+        return;
+      }
+      posti_max_aula[aula] = n;
+    }
     inCorso = true;
     const { error } = await supabase
       .from('impostazioni')
-      .update({ fase, proposte_apertura: daLocale(apertura), proposte_chiusura: daLocale(chiusura) })
+      .update({ fase, proposte_apertura: daLocale(apertura), proposte_chiusura: daLocale(chiusura), posti_max_aula })
       .eq('id', 1);
     inCorso = false;
     if (error) return (errore = messaggioErrore(error));
     await caricaImpostazioni();
     iniziale = { fase, apertura, chiusura };
+    limitiSalvati = JSON.stringify(limiti);
     messaggio = 'Impostazioni salvate.';
   }
 
@@ -110,6 +125,19 @@
         Si vedono in home con il conto alla rovescia. Quando arrivano le date del Consiglio d'istituto e dei Collegi,
         aggiornale qui.
       </p>
+    </section>
+
+    <section class="carta pila">
+      <h2 class="titolo-sezione">Posti massimi per aula</h2>
+      <p class="attenuato piccolo">Chi propone un corso non può chiedere più posti di così. Lascia vuoto se non c'è ancora un limite.</p>
+      <div class="limiti">
+        {#each Object.entries(AULE) as [aula, nome] (aula)}
+          <label class="limite">
+            <span>{nome}</span>
+            <input type="number" inputmode="numeric" min="5" max="300" placeholder="—" bind:value={limiti[aula]} />
+          </label>
+        {/each}
+      </div>
     </section>
 
     <div class="barra-salva" class:attiva={modificato}>
@@ -179,6 +207,19 @@
   .segno { width: 32px; height: 32px; color: var(--testo); }
   .segno :global(svg) { width: 100%; height: 100%; }
 
+  .limiti { display: grid; gap: var(--s-2); margin-top: var(--s-2); }
+  @media (min-width: 560px) { .limiti { grid-template-columns: 1fr 1fr; } }
+  .limite {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 88px;
+    align-items: center;
+    gap: var(--s-3);
+    padding: 6px 6px 6px var(--s-4);
+    border-radius: var(--raggio);
+    border: 1px solid var(--linea);
+    font-size: 15px;
+  }
+  .limite input { min-height: 44px; text-align: center; font: 500 17px/1 var(--mono); }
   .date { display: grid; gap: var(--s-3); }
   @media (min-width: 560px) {
     .date { grid-template-columns: 1fr 1fr; }

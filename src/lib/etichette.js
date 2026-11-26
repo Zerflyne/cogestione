@@ -36,6 +36,8 @@ export function messaggioErrore(e) {
   if (m.includes('palestra_descritta')) return "Per la palestra descrivi l'attività (almeno 20 caratteri).";
   if (m.includes('preferenza_solo_semplici')) return "La preferenza oraria vale solo per l'aula normale senza docente specifico.";
   if (m.includes('palestra_approvata')) return 'Serve prima il sì del dipartimento di scienze motorie.';
+  if (m.includes('posti_oltre_limite')) return m.replace(/^.*posti_oltre_limite: /, 'Troppi posti: ') + '.';
+  if (m.includes('docente_nei_laboratori')) return 'Nei laboratori serve un docente referente.';
   if (m.includes('calendario è bloccato')) return 'Il calendario è bloccato dopo l\'approvazione del Collegio docenti.';
   return m || 'Qualcosa è andato storto. Riprova.';
 }
